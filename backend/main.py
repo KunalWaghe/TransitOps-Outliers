@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth
+from routers import auth, fuel_logs, expenses, dashboard
 
 app = FastAPI(title="TransitOps API")
 
@@ -13,6 +13,9 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(fuel_logs.router)
+app.include_router(expenses.router)
+app.include_router(dashboard.router)
 
 @app.get("/")
 def read_root():

@@ -70,9 +70,9 @@
 | S2-7 | Implement Expense list + create form | M1 | not_started | Category, amount, date, description |
 | S2-8 | Implement Trip router + service with all business rules (BR2-BR8) | M2 | not_started | Create, dispatch, complete, cancel with transactions |
 | S2-9 | Implement Maintenance router + service with BR9-BR10 | M2 | not_started | Auto-set vehicle to `In Shop` / `Available` |
-| S2-10 | Implement Fuel log router + service | M3 | not_started | |
-| S2-11 | Implement Expense router + service | M3 | not_started | |
-| S2-12 | Expand seed script with vehicles, drivers, trips, fuel, expenses, maintenance | M3 | not_started | Realistic demo data |
+| S2-10 | Implement Fuel log router + service | M3 | done | CRUD for fuel entries |
+| S2-11 | Implement Expense router + service | M3 | done | Record tolls, maintenance costs, fines |
+| S2-12 | Expand seed script | M3 | done | Add dummy vehicles, trips, drivers, fuel logs, expenses, maintenance |
 | S2-13 | Add `revenue` field to Trip model and schemas | M2 | not_started | Optional decimal for ROI calc |
 | S2-14 | **CP2 — Hour 4**: Merge trips + maintenance + fuel/expenses to `main` | ALL | not_started | Trip E2E flow working |
 | S2-15 | Wire all CRUD pages to real APIs | M1 | not_started | Replace any remaining mock data |
@@ -87,7 +87,7 @@
 | S3-1 | Build Dashboard page shell with KPI cards | M1 | not_started | Active Vehicles, Available, In Maintenance, Active Trips, Pending Trips, Drivers On Duty, Fleet Utilization % |
 | S3-2 | Add dashboard filter bar (vehicle type, status, region) | M1 | not_started | |
 | S3-3 | Implement 3 charts with recharts: fuel efficiency, operational cost, fleet utilization | M1 | not_started | Bar/line/pie |
-| S3-4 | Implement Dashboard KPI endpoint `GET /api/dashboard/kpis` | M3 | not_started | Filter by type/status/region |
+| S3-4 | Implement Dashboard KPI endpoint | M3 | done | Aggregate stats (active trips, total expenses, etc.) |
 | S3-5 | Implement Dashboard chart endpoint `GET /api/dashboard/charts` | M3 | not_started | |
 | S3-6 | Implement CSV export endpoint `GET /api/reports/export/csv` | M2 | not_started | Financial analyst role only |
 | S3-7 | Build Reports page with charts and export button | M1 | not_started | |
