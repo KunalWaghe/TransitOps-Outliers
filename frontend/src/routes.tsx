@@ -88,11 +88,11 @@ export const router = createBrowserRouter([
             element: <ReportsPage />,
             handle: { crumb: "Reports" },
           },
-          {
-            path: "*",
-            element: <NotFoundPage />,
-          },
         ],
+      },
+      {
+        path: "*",
+        element: <NotFoundPage />,
       },
     ],
   },
