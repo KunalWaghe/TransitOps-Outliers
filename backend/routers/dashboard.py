@@ -55,3 +55,36 @@ def get_dashboard_charts(db: Session = Depends(get_db), current_user: User = Dep
         "expensesByCategory": expense_data,
         "trend": trend_data
     }
+
+@router.get("/vehicle-metrics")
+def get_vehicle_metrics(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    vehicles = db.query(Vehicle).all()
+    metrics = []
+    
+    for v in vehicles:
+        total_revenue = sum([t.revenue for t in v.trips if t.revenue is not None])
+        total_distance = sum([t.actual_distance_km for t in v.trips if t.actual_distance_km is not None])
+        total_fuel_liters = sum([t.fuel_consumed_liters for t in v.trips if t.fuel_consumed_liters is not None])
+        
+        fuel_efficiency = (total_distance / total_fuel_liters) if total_fuel_liters > 0 else 0
+        
+        total_fuel_cost = sum([f.cost for f in v.fuel_logs if f.cost is not None])
+        total_maintenance = sum([m.cost for m in v.maintenance_logs if m.cost is not None])
+        total_maintenance += sum([e.amount for e in v.expenses if e.category.lower() == "maintenance" and e.amount is not None])
+        
+        roi = 0
+        if v.acquisition_cost and v.acquisition_cost > 0:
+            roi = (total_revenue - (total_maintenance + total_fuel_cost)) / v.acquisition_cost
+            
+        metrics.append({
+            "vehicle_id": v.id,
+            "registration_number": v.registration_number,
+            "name": v.name,
+            "type": v.type,
+            "fuel_efficiency_km_per_l": round(fuel_efficiency, 2),
+            "total_revenue": round(total_revenue, 2),
+            "operational_cost": round(total_maintenance + total_fuel_cost, 2),
+            "roi_percentage": round(roi * 100, 2)
+        })
+        
+    return sorted(metrics, key=lambda x: x["roi_percentage"], reverse=True)
