@@ -1,7 +1,17 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
+from enum import Enum as PyEnum
 from .base import Base
+
+class VehicleType(str, PyEnum):
+    TRUCK = "Truck"
+    VAN = "Van"
+
+class VehicleStatus(str, PyEnum):
+    AVAILABLE = "Available"
+    IN_SHOP = "In Shop"
+    ON_TRIP = "On Trip"
 
 class Vehicle(Base):
     __tablename__ = "vehicles"

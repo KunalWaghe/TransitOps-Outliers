@@ -2,7 +2,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, fuel_logs, expenses, dashboard
+from routers import auth, fuel_logs, expenses, dashboard, vehicles, drivers, trips, maintenance
 from services.scheduler import check_expiring_licenses
 
 @asynccontextmanager

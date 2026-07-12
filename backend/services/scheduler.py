@@ -20,16 +20,16 @@ async def check_expiring_licenses():
             thirty_days_from_now = today + timedelta(days=30)
             
             expiring_drivers = db.query(Driver).filter(
-                Driver.license_expiry_date <= thirty_days_from_now,
-                Driver.license_expiry_date >= today
+                Driver.license_expiry <= thirty_days_from_now,
+                Driver.license_expiry >= today
             ).all()
             
             for driver in expiring_drivers:
                 # Simulating an email send for the hackathon
-                days_left = (driver.license_expiry_date - today).days
-                print(f"[EMAIL ALERT] IMPORTANT: Driver {driver.name}'s license ({driver.license_number}) expires in {days_left} days! (on {driver.license_expiry_date.strftime('%Y-%m-%d')})")
+                days_left = (driver.license_expiry - today.date()).days
+                print(f"[EMAIL ALERT] IMPORTANT: Driver {driver.name}'s license ({driver.license_number}) expires in {days_left} days! (on {driver.license_expiry.strftime('%Y-%m-%d')})")
                 
-            expired_drivers = db.query(Driver).filter(Driver.license_expiry_date < today).all()
+            expired_drivers = db.query(Driver).filter(Driver.license_expiry < today).all()
             for driver in expired_drivers:
                 print(f"[EMAIL ALERT] URGENT: Driver {driver.name}'s license is EXPIRED!")
                 
