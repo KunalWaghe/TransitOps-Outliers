@@ -26,8 +26,8 @@
 | P0-3 | Create Layout + Sidebar + ProtectedRoute components | M1 | not_started | Navigable shell with sidebar |
 | P0-4 | Create backend folders: `models/`, `schemas/`, `routers/`, `services/` | M2 | not_started | Empty `__init__.py` files included |
 | P0-5 | Define all SQLAlchemy models (User, Role, Vehicle, Driver, Trip, MaintenanceLog, FuelLog, Expense, VehicleDocument) | M2 | not_started | Match domain model in Part 8 |
-| P0-6 | Set up Alembic and create initial migration | M3 | not_started | Run from host with `DATABASE_URL=localhost:5432` if Docker is fiddly |
-| P0-7 | Set up `database.py`, `config.py`, `dependencies.py` | M3 | not_started | Include `get_db` and `get_current_user` |
+| P0-6 | Set up Alembic and create initial migration | M3 | in_progress | Alembic initialized, migration pending DB connection |
+| P0-7 | Set up `database.py`, `config.py`, `dependencies.py` | M3 | done | Include `get_db` and `get_current_user` |
 | P0-8 | Verify Docker Compose brings up Postgres and app containers | M3 | not_started | `docker compose up --build` smoke test |
 
 ---
@@ -44,9 +44,9 @@
 | S1-6 | Build Driver list page with search, filter by status, sort | M1 | not_started | Show expired license warning |
 | S1-7 | Build Driver create/edit form with validation | M1 | not_started | License expiry date picker |
 | S1-8 | Build reusable `DataTable`, `StatusBadge`, `LoadingSpinner`, `EmptyState` components | M1 | not_started | Shared across all list pages |
-| S1-9 | Implement Auth router: `POST /api/auth/login`, `GET /api/auth/me` | M3 | not_started | JWT via `python-jose` + `passlib` |
-| S1-10 | Implement RBAC dependency and role guards | M3 | not_started | 4 roles: fleet_manager, dispatcher, safety_officer, financial_analyst |
-| S1-11 | Create seed script for roles and demo users | M3 | not_started | `seed.py` |
+| S1-9 | Implement Auth router: `POST /api/auth/login`, `GET /api/auth/me` | M3 | done | JWT via `python-jose` + `passlib` |
+| S1-10 | Implement RBAC dependency and role guards | M3 | done | 4 roles: fleet_manager, dispatcher, safety_officer, financial_analyst |
+| S1-11 | Create seed script for roles and demo users | M3 | done | `seed.py` |
 | S1-12 | Implement Vehicle router + service: CRUD, search, filter, unique reg validation | M2 | not_started | `routers/vehicles.py`, `services/vehicle_service.py` |
 | S1-13 | Implement Driver router + service: CRUD, search, filter, unique license validation | M2 | not_started | `routers/drivers.py`, `services/driver_service.py` |
 | S1-14 | **CP1 — Hour 2**: Merge auth + login + DB schema to `main` | ALL | not_started | Login page functional, schema live |
