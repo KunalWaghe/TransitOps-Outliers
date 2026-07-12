@@ -1,4 +1,4 @@
-import { useLayoutContext } from "../AppShellProvider"
+import { useLayoutContext } from "./useLayoutContext"
 
 export function useSidebar() {
   const {

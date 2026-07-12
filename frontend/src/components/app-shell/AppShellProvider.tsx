@@ -1,15 +1,6 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react"
-import type { LayoutContextValue } from "./types"
+import { useCallback, useEffect, useState, type ReactNode } from "react"
+import { LayoutContext } from "./LayoutContext"
 import { SIDEBAR_STORAGE_KEY } from "./constants"
-
-const LayoutContext = createContext<LayoutContextValue | null>(null)
 
 export function AppShellProvider({ children }: { children: ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
@@ -40,10 +31,4 @@ export function AppShellProvider({ children }: { children: ReactNode }) {
       {children}
     </LayoutContext.Provider>
   )
-}
-
-export function useLayoutContext(): LayoutContextValue {
-  const ctx = useContext(LayoutContext)
-  if (!ctx) throw new Error("useLayoutContext must be used inside AppShellProvider")
-  return ctx
 }
