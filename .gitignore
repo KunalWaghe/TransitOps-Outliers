@@ -24,3 +24,6 @@ dist/
 .DS_Store
 Thumbs.db
 implementation_plan.md
+backend/openapi_actual.json
+openapi.json
+
