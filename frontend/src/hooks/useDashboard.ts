@@ -30,19 +30,6 @@ export interface TripRow {
   etaHighlight?: string
 }
 
-export interface Alert {
-  id: string
-  type: "error" | "warning" | "info"
-  message: string
-  meta: string
-}
-
-export const alerts: Alert[] = [
-  { id: "1", type: "error", message: "Vehicle V-104 reported engine temperature anomaly.", meta: "Route 42 • 10 mins ago" },
-  { id: "2", type: "warning", message: "Driver delay reported at Checkpoint Delta.", meta: "Trip TR-892 • 25 mins ago" },
-  { id: "3", type: "info", message: "Routine maintenance schedule generated for Fleet B.", meta: "System • 1 hour ago" },
-]
-
 export function useDashboard() {
   const [currentHour, setCurrentHour] = useState("24h")
 
