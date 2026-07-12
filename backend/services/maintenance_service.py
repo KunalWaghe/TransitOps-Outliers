@@ -22,12 +22,18 @@ def create_maintenance_log(db: Session, maintenance: MaintenanceCreate):
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
         
-    db_item = MaintenanceLog(**maintenance.model_dump())
+    data = maintenance.model_dump()
+    if data.get('type'):
+        data['type'] = data['type'].value
+    if data.get('status'):
+        data['status'] = data['status'].value
+        
+    db_item = MaintenanceLog(**data)
     db.add(db_item)
     
     # BR9: Pull from dispatch pool -> In Shop
-    if vehicle.status != VehicleStatus.RETIRED:
-        vehicle.status = VehicleStatus.IN_SHOP
+    if vehicle.status != VehicleStatus.RETIRED.value and vehicle.status != VehicleStatus.RETIRED:
+        vehicle.status = VehicleStatus.IN_SHOP.value
         
     db.commit()
     db.refresh(db_item)
@@ -37,24 +43,24 @@ def close_maintenance_log(db: Session, log_id: int):
     log = get_maintenance_log(db, log_id)
     if not log:
         raise HTTPException(status_code=404, detail="Maintenance log not found")
-    if log.status == MaintenanceStatus.CLOSED:
+    if log.status == MaintenanceStatus.CLOSED.value:
         raise HTTPException(status_code=400, detail="Maintenance log is already closed")
         
-    log.status = MaintenanceStatus.CLOSED
+    log.status = MaintenanceStatus.CLOSED.value
     log.closed_at = datetime.utcnow()
     
     # BR10: Restore to Available (unless Retired)
     vehicle = db.query(Vehicle).filter(Vehicle.id == log.vehicle_id).first()
-    if vehicle and vehicle.status == VehicleStatus.IN_SHOP:
+    if vehicle and (vehicle.status == VehicleStatus.IN_SHOP.value or vehicle.status == VehicleStatus.IN_SHOP):
         # Check if there are other active maintenance logs for this vehicle
         active_logs = db.query(MaintenanceLog).filter(
             MaintenanceLog.vehicle_id == vehicle.id, 
-            MaintenanceLog.status == MaintenanceStatus.ACTIVE,
+            MaintenanceLog.status == MaintenanceStatus.ACTIVE.value,
             MaintenanceLog.id != log.id
         ).count()
         
         if active_logs == 0:
-            vehicle.status = VehicleStatus.AVAILABLE
+            vehicle.status = VehicleStatus.AVAILABLE.value
             
     db.commit()
     db.refresh(log)
