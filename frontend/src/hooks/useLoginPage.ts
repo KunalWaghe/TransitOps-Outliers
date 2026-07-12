@@ -5,7 +5,6 @@ import toast from "react-hot-toast"
 export function useLoginPage() {
   const [email, setEmail] = useState("admin@transitops.com")
   const [password, setPassword] = useState("password123")
-  const [selectedRole, setSelectedRole] = useState("fleet_manager")
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -29,8 +28,6 @@ export function useLoginPage() {
     setEmail,
     password,
     setPassword,
-    selectedRole,
-    setSelectedRole,
     showPassword,
     setShowPassword,
     rememberMe,

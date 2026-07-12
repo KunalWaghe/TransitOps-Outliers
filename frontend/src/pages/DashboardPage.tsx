@@ -83,7 +83,7 @@ function KpiCard({ label, value, subValue, icon, status = "good", showProgress, 
 }
 
 const tripColumns: Column<TripRow>[] = [
-  { key: "id", header: "Trip ID", render: row => <span className="font-mono text-[var(--brand-ink-muted)]">{row.id}</span> },
+  { key: "id", header: "Trip ID", sortValue: row => Number(row.id.replace("TR-", "")), render: row => <span className="font-mono text-[var(--brand-ink-muted)]">{row.id}</span> },
   { key: "vehicle", header: "Vehicle", render: row => <span className="font-medium">{row.vehicle}</span> },
   {
     key: "driver",
@@ -227,7 +227,13 @@ export function DashboardPage() {
             View All <ArrowUpRight size={14} />
           </button>
         </div>
-        <DataTable columns={tripColumns} data={trips} keyExtractor={row => row.id} isLoading={isLoading} />
+        <DataTable
+          columns={tripColumns}
+          data={trips}
+          keyExtractor={row => row.id}
+          isLoading={isLoading}
+          defaultSort={{ key: "id", direction: "desc" }}
+        />
       </Card>
     </div>
   )

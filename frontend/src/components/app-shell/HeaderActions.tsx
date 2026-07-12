@@ -1,13 +1,13 @@
 import { Bell, LogOut } from "lucide-react"
+import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
 
-export function HeaderActions() {
-  const { user, logout } = useAuth()
+// Mock avatar using UI Avatars service
+const MOCK_AVATAR_SMALL = "https://ui-avatars.com/api/?name=Raven+K&size=96&background=0075de&color=fff&bold=true"
 
-  const initials = user?.name
-    ? user.name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
-    : "A"
+export function HeaderActions() {
+  const { logout } = useAuth()
 
   return (
     <div className="flex items-center gap-[var(--space-xs)]">
@@ -38,18 +38,23 @@ export function HeaderActions() {
         <LogOut size={17} aria-hidden="true" />
       </button>
 
-      <div
-        aria-label="User avatar"
+      <Link
+        to="/settings"
+        aria-label="User profile"
         className={cn(
           "w-8 h-8 rounded-[var(--radius-full)] shrink-0",
-          "bg-[var(--brand-canvas-soft)] border border-[var(--brand-hairline)]",
-          "flex items-center justify-center",
-          "font-semibold text-[var(--brand-ink-muted)]"
+          "border border-[var(--brand-hairline)]",
+          "overflow-hidden",
+          "transition-opacity duration-150 hover:opacity-80",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)]"
         )}
-        style={{ fontSize: "var(--text-eyebrow)" }}
       >
-        {initials}
-      </div>
+        <img
+          src={MOCK_AVATAR_SMALL}
+          alt="User profile"
+          className="w-full h-full object-cover"
+        />
+      </Link>
     </div>
   )
 }

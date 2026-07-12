@@ -24,7 +24,6 @@ export function useFuelExpenses() {
   const queryClient = useQueryClient()
   const [fuelForm, setFuelForm] = useState({ vehicle_id: "", liters: "", cost: "", odometer_km: "" })
   const [expenseForm, setExpenseForm] = useState({ vehicle_id: "", category: "toll", amount: "", description: "" })
-  const [activeTab, setActiveTab] = useState<"fuel" | "expense">("fuel")
 
   const { data: rawFuelLogs = [], isLoading: isLoadingFuel } = useQuery({ queryKey: ["fuel"], queryFn: () => getFuelLogs() })
   const { data: rawExpenses = [], isLoading: isLoadingExpenses } = useQuery({ queryKey: ["expenses"], queryFn: () => getExpenses() })
@@ -75,7 +74,7 @@ export function useFuelExpenses() {
     e.preventDefault()
     if (!fuelForm.vehicle_id || !fuelForm.liters || !fuelForm.cost) return
 
-    fuelMutation.mutate({
+    await fuelMutation.mutateAsync({
       vehicle_id: Number(fuelForm.vehicle_id),
       liters: Number(fuelForm.liters),
       cost: Number(fuelForm.cost),
@@ -87,7 +86,7 @@ export function useFuelExpenses() {
     e.preventDefault()
     if (!expenseForm.vehicle_id || !expenseForm.amount) return
 
-    expenseMutation.mutate({
+    await expenseMutation.mutateAsync({
       vehicle_id: Number(expenseForm.vehicle_id),
       category: expenseForm.category,
       amount: Number(expenseForm.amount),
@@ -114,9 +113,8 @@ export function useFuelExpenses() {
     setFuelForm,
     expenseForm,
     setExpenseForm,
-    activeTab,
-    setActiveTab,
-    isSubmitting: fuelMutation.isPending || expenseMutation.isPending,
+    isSubmittingFuel: fuelMutation.isPending,
+    isSubmittingExpense: expenseMutation.isPending,
     isLoading,
     totalFuelCost,
     totalExpenseCost,
