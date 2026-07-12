@@ -71,7 +71,7 @@ export function DriversListPage() {
     {
       key: "status",
       header: "Status",
-      render: d => <StatusBadge status={d.status} variant={statusVariantMap[d.status] ?? "neutral"} />,
+      render: d => <StatusBadge status={d.status || "Unknown"} variant={statusVariantMap[d.status || ""] ?? "neutral"} />,
     },
     {
       key: "actions",

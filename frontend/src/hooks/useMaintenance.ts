@@ -1,50 +1,80 @@
 import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { getMaintenanceLogs, createMaintenanceLog, closeMaintenanceLog } from "@/api/maintenance"
+import { getVehicles } from "@/api/vehicles"
+import type { MaintenanceCreate, MaintenanceResponse, MaintenanceType, MaintenanceStatus } from "@/api/types"
 
-export interface MaintenanceRecord {
-  id: number
+export interface MaintenanceRecord extends MaintenanceResponse {
   date: string
   vehicle: string
   service_type: string
-  cost: number
-  status: "Active" | "Completed"
-  notes?: string
 }
 
-export const mockRecords: MaintenanceRecord[] = [
-  { id: 1, date: "2026-07-12", vehicle: "VAN-05", service_type: "Oil Change", cost: 2500, status: "Active" },
-  { id: 2, date: "2026-07-11", vehicle: "TRUCK-11", service_type: "Engine Repair", cost: 18000, status: "Completed" },
-  { id: 3, date: "2026-07-10", vehicle: "MINI-03", service_type: "Tyre Replace", cost: 6200, status: "Active" },
-  { id: 4, date: "2026-07-08", vehicle: "VAN-02", service_type: "Routine Inspection", cost: 850, status: "Completed" },
-]
-
-export const vehicles = [
-  { value: "", label: "Select vehicle" },
-  { value: "VAN-05", label: "VAN-05" },
-  { value: "TRUCK-11", label: "TRUCK-11" },
-  { value: "MINI-03", label: "MINI-03" },
-]
-
-export const serviceTypes = [
-  { value: "", label: "Select service" },
-  { value: "Oil Change", label: "Oil Change" },
-  { value: "Tyre Replace", label: "Tyre Replace" },
-  { value: "Engine Repair", label: "Engine Repair" },
-  { value: "Routine Inspection", label: "Routine Inspection" },
-]
-
 export function useMaintenance() {
-  const [records, setRecords] = useState<MaintenanceRecord[]>(mockRecords)
+  const queryClient = useQueryClient()
   const [form, setForm] = useState({
-    vehicle: "",
-    service_type: "",
+    vehicle_id: "",
+    type: "",
     cost: "",
-    date: "",
     status: "Active",
     notes: "",
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { data: rawLogs = [], isLoading } = useQuery({
+    queryKey: ["maintenance"],
+    queryFn: () => getMaintenanceLogs()
+  })
+
+  const { data: vehiclesData = [] } = useQuery({
+    queryKey: ["vehicles"],
+    queryFn: () => getVehicles()
+  })
+
+  const vehicles = useMemo(() => {
+    return [
+      { value: "", label: "Select vehicle" },
+      ...vehiclesData.map(v => ({ value: String(v.id), label: v.registration_number }))
+    ]
+  }, [vehiclesData])
+
+  const serviceTypes = [
+    { value: "", label: "Select service" },
+    { value: "Oil Change", label: "Oil Change" },
+    { value: "Tire Replacement", label: "Tire Replacement" },
+    { value: "Engine Repair", label: "Engine Repair" },
+    { value: "Brake Service", label: "Brake Service" },
+    { value: "General Inspection", label: "General Inspection" },
+  ]
+
+  const records: MaintenanceRecord[] = useMemo(() => {
+    return rawLogs.map(log => ({
+      ...log,
+      date: new Date(log.created_at).toISOString().split("T")[0],
+      vehicle: vehiclesData.find(v => v.id === log.vehicle_id)?.registration_number || `Vehicle ${log.vehicle_id}`,
+      service_type: log.type,
+    }))
+  }, [rawLogs, vehiclesData])
+
+  const createMutation = useMutation({
+    mutationFn: (data: MaintenanceCreate) => createMaintenanceLog(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance"] })
+      toast.success("Maintenance record saved")
+      setForm({ vehicle_id: "", type: "", cost: "", status: "Active", notes: "" })
+    },
+    onError: () => toast.error("Failed to create maintenance record")
+  })
+
+  const closeMutation = useMutation({
+    mutationFn: (id: number) => closeMaintenanceLog(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance"] })
+      toast.success("Record marked as closed")
+    },
+    onError: () => toast.error("Failed to close record")
+  })
 
   const updateField = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -53,10 +83,9 @@ export function useMaintenance() {
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
-    if (!form.vehicle) newErrors.vehicle = "Select vehicle"
-    if (!form.service_type) newErrors.service_type = "Select service type"
+    if (!form.vehicle_id) newErrors.vehicle_id = "Select vehicle"
+    if (!form.type) newErrors.type = "Select service type"
     if (!form.cost || Number(form.cost) <= 0) newErrors.cost = "Enter valid cost"
-    if (!form.date) newErrors.date = "Select date"
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -65,26 +94,17 @@ export function useMaintenance() {
     e.preventDefault()
     if (!validate()) return
 
-    setIsSubmitting(true)
-    await new Promise(resolve => setTimeout(resolve, 500))
-    const newRecord: MaintenanceRecord = {
-      id: Date.now(),
-      date: form.date,
-      vehicle: form.vehicle,
-      service_type: form.service_type,
+    createMutation.mutate({
+      vehicle_id: Number(form.vehicle_id),
+      type: form.type as MaintenanceType,
       cost: Number(form.cost),
-      status: form.status as "Active" | "Completed",
-      notes: form.notes,
-    }
-    setRecords(prev => [newRecord, ...prev])
-    setForm({ vehicle: "", service_type: "", cost: "", date: "", status: "Active", notes: "" })
-    toast.success("Maintenance record saved")
-    setIsSubmitting(false)
+      notes: form.notes || null,
+      status: form.status as MaintenanceStatus
+    })
   }
 
   const handleClose = (id: number) => {
-    setRecords(prev => prev.map(r => (r.id === id ? { ...r, status: "Completed" as const } : r)))
-    toast.success("Record marked as completed")
+    closeMutation.mutate(id)
   }
 
   const totalCost = useMemo(() => records.reduce((sum, r) => sum + r.cost, 0), [records])
@@ -93,10 +113,13 @@ export function useMaintenance() {
     records,
     form,
     errors,
-    isSubmitting,
+    isSubmitting: createMutation.isPending,
+    isLoading,
     updateField,
     handleSubmit,
     handleClose,
     totalCost,
+    vehicles,
+    serviceTypes,
   }
 }

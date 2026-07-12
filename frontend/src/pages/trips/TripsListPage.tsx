@@ -52,7 +52,7 @@ export function TripsListPage() {
     {
       key: "status",
       header: "Status",
-      render: t => <StatusBadge status={t.status} variant={statusVariantMap[t.status] ?? "neutral"} />,
+      render: t => <StatusBadge status={t.status || "Unknown"} variant={statusVariantMap[t.status || ""] ?? "neutral"} />,
     },
   ]
 
