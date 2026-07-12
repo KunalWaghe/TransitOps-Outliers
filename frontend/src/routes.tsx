@@ -4,7 +4,6 @@ import { RootLayout } from "@/components/RootLayout"
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
 import { LoginPage } from "@/pages/auth/LoginPage"
 import { DashboardPage } from "@/pages/DashboardPage"
-import { DesignSystemPage } from "@/pages/DesignSystemPage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
 import { VehicleFormPage } from "@/pages/vehicles/VehicleFormPage"
 import { VehiclesListPage } from "@/pages/vehicles/VehiclesListPage"
@@ -25,11 +24,6 @@ export const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />,
-      },
-      {
-        path: "/designsystem",
-        element: <DesignSystemPage />,
-        handle: { crumb: "Design System" },
       },
       {
         element: (

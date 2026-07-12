@@ -3,20 +3,12 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/shared/Button"
 import { useLoginPage } from "@/hooks/useLoginPage"
 
-const ROLES = [
-  { id: "fleet_manager", label: "Fleet Manager" },
-  { id: "dispatcher", label: "Dispatcher" },
-  { id: "driver", label: "Driver" },
-]
-
 export function LoginPage() {
   const {
     email,
     setEmail,
     password,
     setPassword,
-    selectedRole,
-    setSelectedRole,
     showPassword,
     setShowPassword,
     rememberMe,
@@ -62,26 +54,6 @@ export function LoginPage() {
           >
             Sign in to your account
           </h2>
-
-          {/* Role tabs */}
-          <div className="flex p-1 bg-[var(--background)] rounded-[var(--radius-md)] border border-[var(--border)] mb-6">
-            {ROLES.map(role => (
-              <button
-                key={role.id}
-                type="button"
-                onClick={() => setSelectedRole(role.id)}
-                className={cn(
-                  "flex-1 py-1.5 text-center font-medium transition-all rounded-[var(--radius-sm)]",
-                  selectedRole === role.id
-                    ? "bg-[var(--brand-surface)] text-[var(--brand-ink)] shadow-sm"
-                    : "text-[var(--brand-ink-muted)] hover:text-[var(--brand-ink)]"
-                )}
-                style={{ fontSize: "var(--text-caption)" }}
-              >
-                {role.label}
-              </button>
-            ))}
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
