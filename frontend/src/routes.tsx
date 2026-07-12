@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom"
 import { AppShell } from "@/components/app-shell"
+import { RootLayout } from "@/components/RootLayout"
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
 import { LoginPage } from "@/pages/auth/LoginPage"
 import { DashboardPage } from "@/pages/DashboardPage"
@@ -18,75 +19,80 @@ import { TripsListPage } from "@/pages/trips/TripsListPage"
 
 export const router = createBrowserRouter([
   {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/designsystem",
-    element: <DesignSystemPage />,
-    handle: { crumb: "Design System" },
-  },
-  {
-    element: (
-      <ProtectedRoute>
-        <AppShell />
-      </ProtectedRoute>
-    ),
+    element: <RootLayout />,
     children: [
       {
-        index: true,
-        element: <DashboardPage />,
-        handle: { crumb: "Dashboard" },
+        path: "/login",
+        element: <LoginPage />,
       },
       {
-        path: "vehicles",
-        handle: { crumb: "Vehicles" },
+        path: "/designsystem",
+        element: <DesignSystemPage />,
+        handle: { crumb: "Design System" },
+      },
+      {
+        element: (
+          <ProtectedRoute>
+            <AppShell />
+          </ProtectedRoute>
+        ),
         children: [
-          { index: true, element: <VehiclesListPage /> },
-          { path: "new", element: <VehicleFormPage />, handle: { crumb: "Add Vehicle" } },
-          { path: ":id/edit", element: <VehicleFormPage />, handle: { crumb: "Edit Vehicle" } },
+          {
+            index: true,
+            element: <DashboardPage />,
+            handle: { crumb: "Dashboard" },
+          },
+          {
+            path: "vehicles",
+            handle: { crumb: "Vehicles" },
+            children: [
+              { index: true, element: <VehiclesListPage /> },
+              { path: "new", element: <VehicleFormPage />, handle: { crumb: "Add Vehicle" } },
+              { path: ":id/edit", element: <VehicleFormPage />, handle: { crumb: "Edit Vehicle" } },
+            ],
+          },
+          {
+            path: "drivers",
+            handle: { crumb: "Drivers" },
+            children: [
+              { index: true, element: <DriversListPage /> },
+              { path: "new", element: <DriverFormPage />, handle: { crumb: "Add Driver" } },
+              { path: ":id/edit", element: <DriverFormPage />, handle: { crumb: "Edit Driver" } },
+            ],
+          },
+          {
+            path: "trips",
+            handle: { crumb: "Trips" },
+            children: [
+              { index: true, element: <TripsListPage /> },
+              { path: "new", element: <TripCreatePage />, handle: { crumb: "Create Trip" } },
+              { path: ":id", element: <TripDetailPage />, handle: { crumb: "Trip Details" } },
+            ],
+          },
+          {
+            path: "maintenance",
+            element: <MaintenancePage />,
+            handle: { crumb: "Maintenance" },
+          },
+          {
+            path: "fuel",
+            element: <FuelExpensesPage />,
+            handle: { crumb: "Fuel & Expenses" },
+          },
+          {
+            path: "expenses",
+            element: <Navigate to="/fuel" replace />,
+          },
+          {
+            path: "reports",
+            element: <ReportsPage />,
+            handle: { crumb: "Reports" },
+          },
+          {
+            path: "*",
+            element: <NotFoundPage />,
+          },
         ],
-      },
-      {
-        path: "drivers",
-        handle: { crumb: "Drivers" },
-        children: [
-          { index: true, element: <DriversListPage /> },
-          { path: "new", element: <DriverFormPage />, handle: { crumb: "Add Driver" } },
-          { path: ":id/edit", element: <DriverFormPage />, handle: { crumb: "Edit Driver" } },
-        ],
-      },
-      {
-        path: "trips",
-        handle: { crumb: "Trips" },
-        children: [
-          { index: true, element: <TripsListPage /> },
-          { path: "new", element: <TripCreatePage />, handle: { crumb: "Create Trip" } },
-          { path: ":id", element: <TripDetailPage />, handle: { crumb: "Trip Details" } },
-        ],
-      },
-      {
-        path: "maintenance",
-        element: <MaintenancePage />,
-        handle: { crumb: "Maintenance" },
-      },
-      {
-        path: "fuel",
-        element: <FuelExpensesPage />,
-        handle: { crumb: "Fuel & Expenses" },
-      },
-      {
-        path: "expenses",
-        element: <Navigate to="/fuel" replace />,
-      },
-      {
-        path: "reports",
-        element: <ReportsPage />,
-        handle: { crumb: "Reports" },
-      },
-      {
-        path: "*",
-        element: <NotFoundPage />,
       },
     ],
   },
