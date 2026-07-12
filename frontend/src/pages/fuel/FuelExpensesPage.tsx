@@ -6,13 +6,10 @@ import { EmptyState } from "@/components/shared/EmptyState"
 import { Input } from "@/components/shared/Input"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { Select } from "@/components/shared/Select"
-import { StatusBadge } from "@/components/shared/StatusBadge"
 import { formatDate } from "@/utils/format"
 import { cn } from "@/lib/utils"
 import {
   useFuelExpenses,
-  vehicles,
-  expenseCategories,
   type FuelLog,
   type Expense,
 } from "@/hooks/useFuelExpenses"
@@ -28,12 +25,15 @@ export function FuelExpensesPage() {
     activeTab,
     setActiveTab,
     isSubmitting,
+    isLoading,
     totalFuelCost,
     totalOperationalCost,
     handleFuelSubmit,
     handleExpenseSubmit,
     highestSpenders,
     maxSpender,
+    vehicles,
+    expenseCategories,
   } = useFuelExpenses()
 
   const fuelColumns: Column<FuelLog>[] = [
@@ -44,12 +44,11 @@ export function FuelExpensesPage() {
   ]
 
   const expenseColumns: Column<Expense>[] = [
-    { key: "trip_id", header: "Trip", render: e => <span className="text-[var(--brand-ink-muted)]">{e.trip_id}</span> },
+    { key: "date", header: "Date", render: e => <span className="text-[var(--brand-ink-muted)]">{formatDate(e.date)}</span> },
     { key: "vehicle", header: "Vehicle", render: e => <span className="font-medium text-[var(--brand-primary)]">{e.vehicle}</span> },
-    { key: "toll", header: "Toll", render: e => <span>{e.toll}</span> },
-    { key: "other", header: "Other", render: e => <span>{e.other}</span> },
-    { key: "maintenance", header: "Maint. (Linked)", render: e => <span>{e.maintenance}</span> },
-    { key: "total", header: "Total", align: "right", render: e => <StatusBadge status={e.status} variant="completed" /> },
+    { key: "category", header: "Category", render: e => <span className="capitalize">{e.category}</span> },
+    { key: "description", header: "Description", render: e => <span>{e.description || "-"}</span> },
+    { key: "amount", header: "Amount", align: "right", render: e => <span className="font-semibold text-[var(--brand-ink)]">₹{e.amount.toLocaleString("en-IN")}</span> },
   ]
 
   return (
@@ -82,7 +81,7 @@ export function FuelExpensesPage() {
                 Fuel Logs
               </h3>
             </div>
-            {fuelLogs.length > 0 ? <DataTable columns={fuelColumns} data={fuelLogs} keyExtractor={f => f.id} /> : <EmptyState />}
+            {fuelLogs.length > 0 ? <DataTable columns={fuelColumns} data={fuelLogs} keyExtractor={f => f.id} isLoading={isLoading} /> : <EmptyState />}
             <div className="mt-4 pt-4 border-t border-[var(--border)] flex justify-between items-center">
               <span className="text-[var(--brand-ink-muted)]" style={{ fontSize: "var(--text-caption)" }}>Total Fuel Cost</span>
               <span className="font-semibold text-[var(--brand-ink)]" style={{ fontSize: "var(--text-title)" }}>
@@ -98,7 +97,7 @@ export function FuelExpensesPage() {
                 Other Expenses (Toll / Misc)
               </h3>
             </div>
-            {expenses.length > 0 ? <DataTable columns={expenseColumns} data={expenses} keyExtractor={e => e.id} /> : <EmptyState />}
+            {expenses.length > 0 ? <DataTable columns={expenseColumns} data={expenses} keyExtractor={e => e.id} isLoading={isLoading} /> : <EmptyState />}
             <div className="mt-4 pt-4 border-t border-[var(--border)] flex justify-between items-center">
               <span className="text-[var(--brand-ink-muted)]" style={{ fontSize: "var(--text-caption)" }}>
                 Total Operational Cost (Auto) = Fuel + Maintenance
@@ -171,15 +170,9 @@ export function FuelExpensesPage() {
               <form onSubmit={handleFuelSubmit} className="space-y-4">
                 <Select
                   label="Vehicle"
-                  value={fuelForm.vehicle}
-                  onChange={e => setFuelForm(prev => ({ ...prev, vehicle: e.target.value }))}
+                  value={fuelForm.vehicle_id}
+                  onChange={e => setFuelForm(prev => ({ ...prev, vehicle_id: e.target.value }))}
                   options={vehicles}
-                />
-                <Input
-                  label="Date"
-                  type="date"
-                  value={fuelForm.date}
-                  onChange={e => setFuelForm(prev => ({ ...prev, date: e.target.value }))}
                 />
                 <div className="grid grid-cols-2 gap-4">
                   <Input
@@ -210,16 +203,10 @@ export function FuelExpensesPage() {
               </form>
             ) : (
               <form onSubmit={handleExpenseSubmit} className="space-y-4">
-                <Input
-                  label="Trip ID"
-                  value={expenseForm.trip_id}
-                  onChange={e => setExpenseForm(prev => ({ ...prev, trip_id: e.target.value }))}
-                  placeholder="TR001"
-                />
                 <Select
                   label="Vehicle"
-                  value={expenseForm.vehicle}
-                  onChange={e => setExpenseForm(prev => ({ ...prev, vehicle: e.target.value }))}
+                  value={expenseForm.vehicle_id}
+                  onChange={e => setExpenseForm(prev => ({ ...prev, vehicle_id: e.target.value }))}
                   options={vehicles}
                 />
                 <Select

@@ -22,7 +22,6 @@ import { cn } from "@/lib/utils"
 import {
   useDashboard,
   utilizationData,
-  trips,
   alerts,
   type TripRow,
 } from "@/hooks/useDashboard"
@@ -108,7 +107,7 @@ const tripColumns: Column<TripRow>[] = [
 ]
 
 export function DashboardPage() {
-  const { currentHour, setCurrentHour } = useDashboard()
+  const { currentHour, setCurrentHour, kpiStats, trips, isLoading } = useDashboard()
 
   return (
     <div className="space-y-[var(--space-lg)]">
@@ -119,11 +118,11 @@ export function DashboardPage() {
 
       {/* KPI grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-[var(--space-md)]">
-        <KpiCard label="Active Vehicles" value="142" subValue="/ 200" icon={<Truck size={16} />} status="good" />
-        <KpiCard label="Available" value="46" icon={<CheckCircle2 size={16} />} status="good" />
-        <KpiCard label="In Maintenance" value="12" icon={<Wrench size={16} />} status="danger" />
-        <KpiCard label="Active Trips" value="89" icon={<Route size={16} />} status="good" />
-        <KpiCard label="Fleet Utilization" value="71%" icon={<BarChart3 size={16} />} status="good" showProgress progress={71} />
+        <KpiCard label="Total Vehicles" value={String(kpiStats.totalVehicles)} icon={<Truck size={16} />} status="good" />
+        <KpiCard label="Available" value={String(kpiStats.availableVehicles)} icon={<CheckCircle2 size={16} />} status="good" />
+        <KpiCard label="In Maintenance" value={String(kpiStats.inMaintenanceVehicles)} icon={<Wrench size={16} />} status={kpiStats.inMaintenanceVehicles > 0 ? "danger" : "good"} />
+        <KpiCard label="Active Trips" value={String(kpiStats.activeTripsCount)} icon={<Route size={16} />} status="good" />
+        <KpiCard label="Fleet Utilization" value={`${kpiStats.fleetUtilization}%`} icon={<BarChart3 size={16} />} status="good" showProgress progress={kpiStats.fleetUtilization} />
       </div>
 
       {/* Middle section: chart + alerts */}
@@ -228,7 +227,7 @@ export function DashboardPage() {
             View All <ArrowUpRight size={14} />
           </button>
         </div>
-        <DataTable columns={tripColumns} data={trips} keyExtractor={row => row.id} />
+        <DataTable columns={tripColumns} data={trips} keyExtractor={row => row.id} isLoading={isLoading} />
       </Card>
     </div>
   )

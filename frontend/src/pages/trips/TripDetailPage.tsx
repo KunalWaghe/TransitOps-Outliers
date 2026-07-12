@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { AlertTriangle, ArrowLeft, CheckCircle2, MapPin, Route, Send, Truck, User, XCircle } from "lucide-react"
+import { AlertTriangle, ArrowLeft, CheckCircle2, MapPin, Route, Send, Truck, User, XCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/shared/Button"
 import { Card } from "@/components/shared/Card"
 import { PageHeader } from "@/components/shared/PageHeader"
@@ -26,6 +26,23 @@ export function TripDetailPage() {
     Cancelled: "cancelled",
   }
 
+  if (isLoading && !trip) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="animate-spin text-[var(--brand-primary)]" size={32} />
+      </div>
+    )
+  }
+
+  if (!trip) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <p className="text-[var(--brand-ink-muted)]">Trip not found.</p>
+        <Button onClick={() => navigate("/trips")}>Back to Trips</Button>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-[var(--space-lg)]">
       <div className="flex items-center gap-2">
@@ -46,11 +63,11 @@ export function TripDetailPage() {
               <h3 className="font-semibold text-[var(--brand-ink)]" style={{ fontSize: "var(--text-title)" }}>
                 Trip Status
               </h3>
-              <StatusBadge status={trip.status} variant={statusVariantMap[trip.status] ?? "neutral"} />
+              <StatusBadge status={trip.status || "Unknown"} variant={statusVariantMap[trip.status || ""] ?? "neutral"} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--space-md)]">
-              <InfoRow icon={<MapPin size={16} />} label="Source" value={trip.source} />
-              <InfoRow icon={<MapPin size={16} />} label="Destination" value={trip.destination} />
+              <InfoRow icon={<MapPin size={16} />} label="Source" value={trip.source || ""} />
+              <InfoRow icon={<MapPin size={16} />} label="Destination" value={trip.destination || ""} />
               <InfoRow icon={<Truck size={16} />} label="Vehicle" value={trip.vehicle} />
               <InfoRow icon={<User size={16} />} label="Driver" value={trip.driver} />
               <InfoRow icon={<Route size={16} />} label="Planned Distance" value={`${trip.planned_distance_km} km`} />
@@ -64,8 +81,8 @@ export function TripDetailPage() {
             </h3>
             <div className="space-y-4">
               <TimelineItem label="Created" timestamp={trip.created_at} completed />
-              <TimelineItem label="Dispatched" timestamp={trip.dispatched_at} completed={trip.status === "Dispatched" || trip.status === "Completed"} />
-              <TimelineItem label="Completed" timestamp={trip.completed_at} completed={trip.status === "Completed"} />
+              <TimelineItem label="Dispatched" timestamp={trip.dispatched_at || undefined} completed={trip.status === "Dispatched" || trip.status === "Completed"} />
+              <TimelineItem label="Completed" timestamp={trip.completed_at || undefined} completed={trip.status === "Completed"} />
             </div>
           </Card>
         </div>
