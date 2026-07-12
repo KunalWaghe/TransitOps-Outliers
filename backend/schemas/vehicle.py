@@ -10,7 +10,7 @@ class VehicleBase(BaseModel):
     max_capacity_kg: float
     odometer_km: float
     acquisition_cost: float
-    region: str
+    region: Optional[str] = None
     status: Optional[VehicleStatus] = VehicleStatus.AVAILABLE
 
 class VehicleCreate(VehicleBase):
