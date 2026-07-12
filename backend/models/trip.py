@@ -23,7 +23,7 @@ class Trip(Base):
     actual_distance_km = Column(Float, nullable=True)
     fuel_consumed_liters = Column(Float, nullable=True)
     revenue = Column(Float, nullable=True)
-    status = Column(SQLEnum(TripStatus), default=TripStatus.DRAFT, index=True)
+    status = Column(String, default=TripStatus.DRAFT.value, index=True)
     
     created_at = Column(DateTime, default=datetime.utcnow)
     dispatched_at = Column(DateTime, nullable=True)
