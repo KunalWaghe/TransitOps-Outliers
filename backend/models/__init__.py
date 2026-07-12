@@ -1,3 +1,6 @@
+from database import Base
+from .user import User, Role
+# Future models will be imported here
 from .base import Base
 from .user import Role, User
 from .vehicle import Vehicle
