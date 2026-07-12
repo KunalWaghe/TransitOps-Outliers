@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* ───────────────────────────────────────────
+       Design system — light mode tokens
+       ─────────────────────────────────────────── */
+
+    /* shadcn/ui base tokens mapped to design colors */
+    --background: #f6f5f4;
+    --foreground: #000000;
+    --card: #ffffff;
+    --card-foreground: #000000;
+    --popover: #ffffff;
+    --popover-foreground: #000000;
+    --primary: #0075de;
+    --primary-foreground: #ffffff;
+    --secondary: #f6f5f4;
+    --secondary-foreground: #000000;
+    --muted: #f6f5f4;
+    --muted-foreground: #615d59;
+    --accent: #f6f5f4;
+    --accent-foreground: #000000;
+    --destructive: #dd5b00;
+    --destructive-foreground: #ffffff;
+    --border: #e6e6e6;
+    --input: #e6e6e6;
+    --ring: #0075de;
+    --radius: 0.75rem;
+
+    /* Brand palette */
+    --brand-primary: #0075de;
+    --brand-primary-active: #005bab;
+    --brand-secondary: #213183;
+    --brand-on-primary: #ffffff;
+    --brand-canvas: #ffffff;
+    --brand-canvas-soft: #f6f5f4;
+    --brand-surface: #ffffff;
+    --brand-ink: #000000;
+    --brand-ink-secondary: #31302e;
+    --brand-ink-muted: #615d59;
+    --brand-ink-faint: #a39e98;
+    --brand-hairline: #e6e6e6;
+
+    /* Decorative sticker palette */
+    --brand-accent-sky: #62aef0;
+    --brand-accent-purple: #d6b6f6;
+    --brand-accent-purple-deep: #391c57;
+    --brand-accent-pink: #ff64c8;
+    --brand-accent-orange: #dd5b00;
+    --brand-accent-orange-deep: #793400;
+    --brand-accent-teal: #2a9d99;
+    --brand-accent-green: #1aae39;
+    --brand-accent-brown: #523410;
+
+    /* Typography scale */
+    --font-sans: Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-display: Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+
+    --text-display-1: 4rem;
+    --text-display-2: 3.375rem;
+    --text-heading-1: 2.5rem;
+    --text-heading-2: 1.625rem;
+    --text-heading-3: 1.375rem;
+    --text-title: 1.25rem;
+    --text-body-md: 1rem;
+    --text-body-sm: 0.9375rem;
+    --text-button: 1rem;
+    --text-caption: 0.875rem;
+    --text-eyebrow: 0.75rem;
+
+    --leading-display-1: 1;
+    --leading-display-2: 1.04;
+    --leading-heading-1: 1.1;
+    --leading-heading-2: 1.23;
+    --leading-heading-3: 1.27;
+    --leading-title: 1.4;
+    --leading-body-md: 1.5;
+    --leading-body-sm: 1.33;
+    --leading-button: 1.5;
+    --leading-caption: 1.43;
+    --leading-eyebrow: 1.33;
+
+    --tracking-display-1: -0.1328125rem;
+    --tracking-display-2: -0.1171875rem;
+    --tracking-heading-1: -0.0625rem;
+    --tracking-heading-2: -0.0390625rem;
+    --tracking-heading-3: -0.015625rem;
+    --tracking-title: -0.0078125rem;
+    --tracking-body-md: 0;
+    --tracking-body-sm: 0;
+    --tracking-button: 0;
+    --tracking-caption: 0;
+    --tracking-eyebrow: 0.0078125rem;
+
+    /* Spacing scale */
+    --space-xxs: 0.25rem;
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 1.75rem;
+    --space-xxl: 2rem;
+
+    /* Border radius scale */
+    --radius-xs: 0.25rem;
+    --radius-sm: 0.3125rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-full: 9999px;
+
+    /* Elevation shadows */
+    --shadow-1:
+      rgba(0, 0, 0, 0.01) 0 0.175px 1.041px,
+      rgba(0, 0, 0, 0.02) 0 0.8px 2.925px,
+      rgba(0, 0, 0, 0.027) 0 2.025px 7.847px,
+      rgba(0, 0, 0, 0.04) 0 4px 18px;
+    --shadow-2:
+      rgba(0, 0, 0, 0.05) 0 23px 52px;
+
+    color-scheme: light;
+  }
+
+  .dark {
+    /* shadcn/ui base tokens — dark mode inversion */
+    --background: #0a0a0a;
+    --foreground: #f6f5f4;
+    --card: #171717;
+    --card-foreground: #f6f5f4;
+    --popover: #171717;
+    --popover-foreground: #f6f5f4;
+    --primary: #0075de;
+    --primary-foreground: #ffffff;
+    --secondary: #213183;
+    --secondary-foreground: #ffffff;
+    --muted: #171717;
+    --muted-foreground: #a39e98;
+    --accent: #171717;
+    --accent-foreground: #f6f5f4;
+    --destructive: #ff8a4c;
+    --destructive-foreground: #000000;
+    --border: #262626;
+    --input: #262626;
+    --ring: #62aef0;
+
+    /* Brand palette — dark mode */
+    --brand-canvas: #0a0a0a;
+    --brand-canvas-soft: #111111;
+    --brand-surface: #171717;
+    --brand-ink: #f6f5f4;
+    --brand-ink-secondary: #e6e6e6;
+    --brand-ink-muted: #a39e98;
+    --brand-ink-faint: #615d59;
+    --brand-hairline: #262626;
+
+    color-scheme: dark;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background-color: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100svh;
+  }
+}
