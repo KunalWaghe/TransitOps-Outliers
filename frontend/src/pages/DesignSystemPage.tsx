@@ -1,7 +1,7 @@
-import { Link, MemoryRouter, Route, Routes } from "react-router-dom"
+import { Link } from "react-router-dom"
+import { ChevronRight } from "lucide-react"
 import {
   AppShellProvider,
-  Breadcrumbs,
   Header,
   HeaderActions,
   MobileDrawer,
@@ -118,14 +118,40 @@ function TypographySample({
 }
 
 function BreadcrumbsDemo() {
+  const crumbs = ["Fleet", "Vehicles"]
+
   return (
-    <MemoryRouter initialEntries={["/vehicles"]}>
-      <Routes>
-        <Route path="/" handle={{ crumb: "Fleet" }}>
-          <Route path="vehicles" element={<Breadcrumbs />} handle={{ crumb: "Vehicles" }} />
-        </Route>
-      </Routes>
-    </MemoryRouter>
+    <nav aria-label="Breadcrumb">
+      <ol className="flex items-center gap-1">
+        {crumbs.map((crumb, i) => (
+          <li key={crumb} className="flex items-center gap-1">
+            {i > 0 && (
+              <ChevronRight
+                size={12}
+                aria-hidden="true"
+                className="text-[var(--brand-ink-faint)]"
+              />
+            )}
+            {i < crumbs.length - 1 ? (
+              <span
+                className="text-[var(--brand-ink-muted)]"
+                style={{ fontSize: "var(--text-caption)", lineHeight: "var(--leading-caption)" }}
+              >
+                {crumb}
+              </span>
+            ) : (
+              <span
+                aria-current="page"
+                className="font-medium text-[var(--brand-ink)]"
+                style={{ fontSize: "var(--text-caption)", lineHeight: "var(--leading-caption)" }}
+              >
+                {crumb}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
   )
 }
 
