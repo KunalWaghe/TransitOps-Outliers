@@ -12,22 +12,25 @@ interface ModalProps {
 
 export function Modal({ isOpen, onClose, title, children, className }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   useEffect(() => {
     if (!isOpen) return
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
+      if (e.key === "Escape") onCloseRef.current()
     }
     document.addEventListener("keydown", handleKeyDown)
-    // Focus the modal for accessibility
-    modalRef.current?.focus()
-    // Prevent body scroll when modal is open
     document.body.style.overflow = "hidden"
     return () => {
       document.removeEventListener("keydown", handleKeyDown)
       document.body.style.overflow = ""
     }
-  }, [isOpen, onClose])
+  }, [isOpen])
+
+  useEffect(() => {
+    if (isOpen) modalRef.current?.focus()
+  }, [isOpen])
 
   if (!isOpen) return null
 

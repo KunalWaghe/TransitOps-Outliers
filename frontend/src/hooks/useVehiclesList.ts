@@ -21,9 +21,9 @@ export function useVehiclesList() {
     if (search.trim()) {
       const q = search.toLowerCase()
       data = data.filter(v =>
-        v.registration_number.toLowerCase().includes(q) ||
-        v.name.toLowerCase().includes(q) ||
-        v.region.toLowerCase().includes(q)
+        v.registration_number?.toLowerCase().includes(q) ||
+        v.name?.toLowerCase().includes(q) ||
+        v.region?.toLowerCase().includes(q)
       )
     }
 
