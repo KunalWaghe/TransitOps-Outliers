@@ -1,11 +1,7 @@
-import { Edit2, Lock, Bell, LogOut, Shield, ChevronRight, User } from "lucide-react"
+import { Lock, Bell, LogOut, Shield, ChevronRight, User } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/shared/Button"
-
-// Mock avatar using UI Avatars service
-const MOCK_AVATAR = "https://ui-avatars.com/api/?name=Raven+K&size=200&background=0075de&color=fff&bold=true"
-const MOCK_AVATAR_SMALL = "https://ui-avatars.com/api/?name=Raven+K&size=96&background=0075de&color=fff&bold=true"
 
 interface SettingsSectionProps {
   icon: React.ReactNode
@@ -87,62 +83,8 @@ export function SettingsPage() {
 
       {/* Bento Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Profile Card + Menu */}
+        {/* Left Column: Menu */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Profile Card */}
-          <div className="bg-[var(--brand-surface)] border border-[var(--brand-hairline)] rounded-[var(--radius-lg)] p-6 flex flex-col items-center text-center">
-            <div className="relative mb-4">
-              <img
-                src={MOCK_AVATAR}
-                alt="Profile"
-                className="w-24 h-24 rounded-full border-2 border-[var(--brand-primary)] object-cover shadow-lg"
-              />
-              <button
-                className={cn(
-                  "absolute bottom-0 right-0 w-8 h-8 rounded-full",
-                  "bg-[var(--background)] border border-[var(--brand-hairline)]",
-                  "flex items-center justify-center",
-                  "hover:bg-[var(--brand-canvas-soft)] transition-colors",
-                  "text-[var(--brand-ink)]"
-                )}
-                aria-label="Edit profile picture"
-              >
-                <Edit2 size={14} />
-              </button>
-            </div>
-            <h3
-              className="font-bold text-[var(--brand-ink)] mb-1"
-              style={{
-                fontSize: "var(--text-heading)",
-                lineHeight: "var(--leading-heading)",
-              }}
-            >
-              Raven K.
-            </h3>
-            <p
-              className="text-[var(--brand-ink-muted)] mb-2"
-              style={{
-                fontSize: "var(--text-body)",
-                lineHeight: "var(--leading-body)",
-              }}
-            >
-              raven@transitops.com
-            </p>
-            {/* Role Badge */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--brand-primary)]/10 border border-[var(--brand-primary)]/20 mt-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]" />
-              <span
-                className="text-[var(--brand-primary)] font-medium"
-                style={{
-                  fontSize: "var(--text-caption)",
-                  lineHeight: "var(--leading-caption)",
-                }}
-              >
-                Dispatcher
-              </span>
-            </div>
-          </div>
-
           {/* Account Actions */}
           <div className="bg-[var(--brand-surface)] border border-[var(--brand-hairline)] rounded-[var(--radius-lg)] p-4 space-y-2">
             <SettingsSection
