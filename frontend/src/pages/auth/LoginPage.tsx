@@ -1,9 +1,7 @@
-import { useState } from "react"
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react"
-import toast from "react-hot-toast"
 import { cn } from "@/lib/utils"
-import { useAuth } from "@/hooks/useAuth"
 import { Button } from "@/components/shared/Button"
+import { useLoginPage } from "@/hooks/useLoginPage"
 
 const ROLES = [
   { id: "fleet_manager", label: "Fleet Manager" },
@@ -12,26 +10,20 @@ const ROLES = [
 ]
 
 export function LoginPage() {
-  const [email, setEmail] = useState("admin@transitops.com")
-  const [password, setPassword] = useState("password123")
-  const [selectedRole, setSelectedRole] = useState("fleet_manager")
-  const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    try {
-      await login(email, password)
-      toast.success("Welcome back")
-    } catch {
-      toast.error("Invalid email or password")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    selectedRole,
+    setSelectedRole,
+    showPassword,
+    setShowPassword,
+    rememberMe,
+    setRememberMe,
+    isLoading,
+    handleSubmit,
+  } = useLoginPage()
 
   return (
     <div className="min-h-screen flex items-center justify-center relative bg-[var(--background)] p-4">

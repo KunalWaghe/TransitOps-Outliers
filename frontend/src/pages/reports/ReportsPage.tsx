@@ -1,6 +1,4 @@
-import { useState } from "react"
 import { Download, Fuel, PieChart, TrendingUp, Wallet } from "lucide-react"
-import toast from "react-hot-toast"
 import {
   Bar,
   BarChart,
@@ -14,25 +12,12 @@ import { Button } from "@/components/shared/Button"
 import { Card } from "@/components/shared/Card"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { cn } from "@/lib/utils"
-
-const revenueData = [
-  { month: "Jan", revenue: 12000 },
-  { month: "Feb", revenue: 18000 },
-  { month: "Mar", revenue: 14000 },
-  { month: "Apr", revenue: 22000 },
-  { month: "May", revenue: 20000 },
-  { month: "Jun", revenue: 28000 },
-  { month: "Jul", revenue: 26000 },
-  { month: "Aug", revenue: 32000 },
-]
-
-const topCostlyVehicles = [
-  { name: "TRUCK-II", cost: 12450, color: "#dd5b00" },
-  { name: "MINI-03", cost: 8200, color: "#2a9d99" },
-  { name: "VAN-05", cost: 5100, color: "var(--brand-primary)" },
-]
-
-const maxCost = topCostlyVehicles[0].cost
+import {
+  useReports,
+  revenueData,
+  topCostlyVehicles,
+  maxCost,
+} from "@/hooks/useReports"
 
 interface KpiCardProps {
   label: string
@@ -76,12 +61,7 @@ function KpiCard({ label, value, subValue, icon, trend }: KpiCardProps) {
 }
 
 export function ReportsPage() {
-  const [year, setYear] = useState("2026")
-  const financialAnalyst = true
-
-  const handleExport = () => {
-    toast.success("Report export started")
-  }
+  const { year, setYear, financialAnalyst, handleExport } = useReports()
 
   return (
     <div className="space-y-[var(--space-lg)]">
