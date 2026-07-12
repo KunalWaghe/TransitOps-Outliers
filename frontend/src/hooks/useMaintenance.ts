@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getMaintenanceLogs, createMaintenanceLog, closeMaintenanceLog } from "@/api/maintenance"
+import { getMaintenanceLogs, createMaintenanceLog, closeMaintenanceLog, exportMaintenanceCsv } from "@/api/maintenance"
 import { getVehicles } from "@/api/vehicles"
 import type { MaintenanceCreate, MaintenanceResponse, MaintenanceType, MaintenanceStatus } from "@/api/types"
 
@@ -21,6 +21,7 @@ export function useMaintenance() {
     notes: "",
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isExporting, setIsExporting] = useState(false)
 
   const { data: rawLogs = [], isLoading } = useQuery({
     queryKey: ["maintenance"],
@@ -107,6 +108,33 @@ export function useMaintenance() {
     closeMutation.mutate(id)
   }
 
+  const handleExport = async () => {
+    if (isExporting) return
+
+    setIsExporting(true)
+    const toastId = toast.loading("Exporting maintenance log...")
+
+    try {
+      await exportMaintenanceCsv()
+      toast.success("Maintenance log downloaded successfully", { id: toastId })
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: Blob } }
+      if (axiosErr?.response?.data instanceof Blob) {
+        const text = await axiosErr.response.data.text()
+        try {
+          const json = JSON.parse(text)
+          toast.error(json.detail ?? "Export failed. Please try again.", { id: toastId })
+        } catch {
+          toast.error("Export failed. Please try again.", { id: toastId })
+        }
+      } else {
+        toast.error("Export failed. Please try again.", { id: toastId })
+      }
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   const totalCost = useMemo(() => records.reduce((sum, r) => sum + r.cost, 0), [records])
 
   return {
@@ -115,9 +143,11 @@ export function useMaintenance() {
     errors,
     isSubmitting: createMutation.isPending,
     isLoading,
+    isExporting,
     updateField,
     handleSubmit,
     handleClose,
+    handleExport,
     totalCost,
     vehicles,
     serviceTypes,

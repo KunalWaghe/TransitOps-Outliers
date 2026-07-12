@@ -19,9 +19,11 @@ export function MaintenancePage() {
     errors,
     isSubmitting,
     isLoading,
+    isExporting,
     updateField,
     handleSubmit,
     handleClose,
+    handleExport,
     totalCost,
     vehicles,
     serviceTypes,
@@ -49,7 +51,7 @@ export function MaintenancePage() {
   return (
     <div className="space-y-[var(--space-lg)]">
       <PageHeader title="Maintenance" subtitle="Log and track vehicle service records.">
-        <Button variant="secondary" leftIcon={<Download size={18} />}>
+        <Button variant="secondary" leftIcon={<Download size={18} />} onClick={handleExport} isLoading={isExporting}>
           Export Log
         </Button>
       </PageHeader>

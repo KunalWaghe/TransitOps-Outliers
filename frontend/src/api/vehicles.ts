@@ -1,6 +1,8 @@
 import { apiClient } from "./client"
 import type { VehicleCreate, VehicleResponse, VehicleUpdate } from "./types"
 
+const DEFAULT_VEHICLE_LIST_LIMIT = 1000
+
 export const getAvailableVehicles = async () => {
   const response = await apiClient.get<VehicleResponse[]>("/api/vehicles/available")
   return response.data
@@ -13,7 +15,9 @@ export const getVehicles = async (params?: {
   type?: string
   search?: string
 }) => {
-  const response = await apiClient.get<VehicleResponse[]>("/api/vehicles/", { params })
+  const response = await apiClient.get<VehicleResponse[]>("/api/vehicles/", {
+    params: { ...params, limit: params?.limit ?? DEFAULT_VEHICLE_LIST_LIMIT },
+  })
   return response.data
 }
 
