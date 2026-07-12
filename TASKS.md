@@ -74,7 +74,7 @@
 | S2-13 | Add `revenue` field to Trip model and schemas | M2 | not_started | Optional decimal for ROI calc |
 | S2-14 | **CP2 — Hour 4**: Merge trips + maintenance + fuel/expenses to `main` | ALL | not_started | Trip E2E flow working |
 | S2-15 | Wire all CRUD pages to real APIs | M1 | not_started | Replace any remaining mock data |
-| S2-16 | Test edge cases: duplicate reg, on-trip delete, cargo capacity, empty dropdowns | M2 | not_started | Verify backend returns correct errors |
+| S2-16 | Test edge cases: duplicate reg, on-trip delete, cargo capacity, empty dropdowns | M2 | done | Verify backend returns correct errors |
 
 ---
 
@@ -94,7 +94,7 @@
 | S3-10 | (P1) Add dark mode toggle + ThemeContext | M1 | done | Toggle in SidebarFooter; ThemeContext already exists; layout verified |
 | S3-11 | (P1) Implement email reminder endpoint for expiring licenses | M3 | done | No SMTP; identify 30-day expirations and show in UI |
 | S3-12 | (P1) Build UI alert for expiring license reminders | M1 | not_started | |
-| S3-13 | (P1) Vehicle document upload (registration, insurance) | M1 / M2 | not_started | Local disk storage, backend endpoint |
+| S3-13 | (P1) Vehicle document upload (registration, insurance) | M1 / M2 | done | Local disk storage, backend endpoint |
 | S3-14 | (P1) Add pagination to list views | M1 | not_started | Backend + frontend |
 
 ---
