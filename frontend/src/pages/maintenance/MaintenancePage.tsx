@@ -28,14 +28,15 @@ export function MaintenancePage() {
   } = useMaintenance()
 
   const columns: Column<MaintenanceRecord>[] = [
-    { key: "date", header: "Date", render: r => <span className="text-[var(--brand-ink-muted)]">{r.date}</span> },
+    { key: "date", header: "Date", sortValue: r => r.date, render: r => <span className="text-[var(--brand-ink-muted)]">{r.date}</span> },
     { key: "vehicle", header: "Vehicle", render: r => <span className="font-medium">{r.vehicle}</span> },
     { key: "service_type", header: "Service", render: r => <span className="text-[var(--brand-ink-muted)]">{r.service_type}</span> },
-    { key: "cost", header: "Cost", align: "right", render: r => <span className="font-mono">₹{r.cost.toLocaleString("en-IN")}</span> },
+    { key: "cost", header: "Cost", align: "right", sortValue: r => r.cost, render: r => <span className="font-mono">₹{r.cost.toLocaleString("en-IN")}</span> },
     { key: "status", header: "Status", render: r => <StatusBadge status={r.status || "Unknown"} variant={r.status === "Active" ? "in_maintenance" : "completed"} /> },
     {
       key: "actions",
       header: "",
+      sortable: false,
       render: r =>
         r.status === "Active" ? (
           <Button variant="secondary" size="sm" onClick={() => handleClose(r.id)}>
@@ -139,7 +140,13 @@ export function MaintenancePage() {
               </button>
             </div>
             <div className="flex-1">
-              <DataTable columns={columns} data={records} keyExtractor={r => r.id} isLoading={isLoading} />
+              <DataTable
+                columns={columns}
+                data={records}
+                keyExtractor={r => r.id}
+                isLoading={isLoading}
+                defaultSort={{ key: "date", direction: "desc" }}
+              />
             </div>
             <div className="mt-4 pt-4 border-t border-[var(--border)] flex justify-between items-center text-[var(--brand-ink-muted)]" style={{ fontSize: "var(--text-caption)" }}>
               <span>Total maintenance cost</span>

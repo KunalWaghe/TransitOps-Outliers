@@ -95,7 +95,7 @@
 | S3-11 | (P1) Implement email reminder endpoint for expiring licenses | M3 | done | No SMTP; identify 30-day expirations and show in UI |
 | S3-12 | (P1) Build UI alert for expiring license reminders | M1 | not_started | |
 | S3-13 | (P1) Vehicle document upload (registration, insurance) | M1 / M2 | done | Local disk storage, backend endpoint |
-| S3-14 | (P1) Add pagination to list views | M1 | not_started | Backend + frontend |
+| S3-14 | (P1) Add pagination to list views | M1 | in_progress | DataTable pagination + Modal merged; rolling out to list pages; UserManagement page WIP |
 
 ---
 

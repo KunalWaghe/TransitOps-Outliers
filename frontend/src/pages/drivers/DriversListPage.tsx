@@ -49,6 +49,7 @@ export function DriversListPage() {
     {
       key: "license_expiry",
       header: "License Expiry",
+      sortValue: d => d.license_expiry,
       render: d => {
         const expired = isExpired(d.license_expiry)
         const expiring = isExpiringSoon(d.license_expiry)
@@ -67,7 +68,7 @@ export function DriversListPage() {
         )
       },
     },
-    { key: "safety_score", header: "Safety Score", align: "right", render: d => <span>{d.safety_score}</span> },
+    { key: "safety_score", header: "Safety Score", align: "right", sortValue: d => d.safety_score, render: d => <span>{d.safety_score}</span> },
     {
       key: "status",
       header: "Status",
@@ -76,6 +77,7 @@ export function DriversListPage() {
     {
       key: "actions",
       header: "",
+      sortable: false,
       render: d => (
         <Link
           to={`/drivers/${d.id}/edit`}
