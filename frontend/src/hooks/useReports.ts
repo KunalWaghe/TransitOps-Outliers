@@ -1,5 +1,7 @@
 import { useState } from "react"
 import toast from "react-hot-toast"
+import { exportReportCsv, exportReportPdf } from "@/api/reports"
+import { useAuth } from "@/hooks/useAuth"
 
 export const revenueData = [
   { month: "Jan", revenue: 12000 },
@@ -20,17 +22,52 @@ export const topCostlyVehicles = [
 
 export const maxCost = topCostlyVehicles[0].cost
 
-export function useReports() {
-  const [year, setYear] = useState("2026")
-  const financialAnalyst = true
+export type ExportFormat = "csv" | "pdf"
 
-  const handleExport = () => {
-    toast.success("Report export started")
+export function useReports() {
+  const { user } = useAuth()
+  const [year, setYear] = useState("2026")
+  const [exportFormat, setExportFormat] = useState<ExportFormat>("csv")
+  const [isExporting, setIsExporting] = useState(false)
+  const financialAnalyst = user?.role === "financial_analyst"
+
+  const handleExport = async () => {
+    if (isExporting) return
+    setIsExporting(true)
+    const toastId = toast.loading(`Exporting ${exportFormat.toUpperCase()} report…`)
+    try {
+      if (exportFormat === "csv") {
+        await exportReportCsv()
+      } else {
+        await exportReportPdf()
+      }
+      toast.success("Report downloaded successfully", { id: toastId })
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { status?: number; data?: Blob } }
+      if (axiosErr?.response?.status === 403) {
+        toast.error("Access denied. Only Financial Analysts can export reports.", { id: toastId })
+      } else if (axiosErr?.response?.data instanceof Blob) {
+        const text = await axiosErr.response.data.text()
+        try {
+          const json = JSON.parse(text)
+          toast.error(json.detail ?? "Export failed. Please try again.", { id: toastId })
+        } catch {
+          toast.error("Export failed. Please try again.", { id: toastId })
+        }
+      } else {
+        toast.error("Export failed. Please try again.", { id: toastId })
+      }
+    } finally {
+      setIsExporting(false)
+    }
   }
 
   return {
     year,
     setYear,
+    exportFormat,
+    setExportFormat,
+    isExporting,
     financialAnalyst,
     handleExport,
   }

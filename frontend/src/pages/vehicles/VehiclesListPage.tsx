@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Plus, Search, SlidersHorizontal, ArrowUpDown } from "lucide-react"
+import { Plus, Search, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/shared/Button"
 import { Card } from "@/components/shared/Card"
 import { DataTable, type Column } from "@/components/shared/DataTable"
@@ -25,7 +25,6 @@ export function VehiclesListPage() {
     statusFilter,
     setStatusFilter,
     filteredVehicles,
-    handleSort,
   } = useVehiclesList()
 
   const columns: Column<Vehicle>[] = [
@@ -41,6 +40,7 @@ export function VehiclesListPage() {
       key: "max_capacity_kg",
       header: "Capacity",
       align: "right",
+      sortValue: v => v.max_capacity_kg,
       render: v => <span>{v.max_capacity_kg.toLocaleString("en-IN")} kg</span>,
     },
     {
@@ -51,6 +51,7 @@ export function VehiclesListPage() {
     {
       key: "actions",
       header: "",
+      sortable: false,
       render: v => (
         <Link
           to={`/vehicles/${v.id}/edit`}
@@ -117,14 +118,6 @@ export function VehiclesListPage() {
             </Button>
           </div>
         </div>
-
-        <button
-          type="button"
-          onClick={() => handleSort("registration_number")}
-          className="hidden"
-        >
-          <ArrowUpDown size={16} />
-        </button>
 
         {filteredVehicles.length > 0 ? (
           <DataTable columns={columns} data={filteredVehicles} keyExtractor={v => v.id} />

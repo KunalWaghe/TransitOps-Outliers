@@ -1,18 +1,20 @@
-import { createBrowserRouter, Navigate } from "react-router-dom"
+import { createBrowserRouter } from "react-router-dom"
 import { AppShell } from "@/components/app-shell"
 import { RootLayout } from "@/components/RootLayout"
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
 import { LoginPage } from "@/pages/auth/LoginPage"
 import { DashboardPage } from "@/pages/DashboardPage"
-import { DesignSystemPage } from "@/pages/DesignSystemPage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
 import { VehicleFormPage } from "@/pages/vehicles/VehicleFormPage"
 import { VehiclesListPage } from "@/pages/vehicles/VehiclesListPage"
 import { DriverFormPage } from "@/pages/drivers/DriverFormPage"
 import { DriversListPage } from "@/pages/drivers/DriversListPage"
-import { FuelExpensesPage } from "@/pages/fuel/FuelExpensesPage"
+import { FuelPage } from "@/pages/fuel/FuelPage"
+import { ExpensesPage } from "@/pages/expenses/ExpensesPage"
 import { MaintenancePage } from "@/pages/maintenance/MaintenancePage"
 import { ReportsPage } from "@/pages/reports/ReportsPage"
+import { SettingsPage } from "@/pages/settings/SettingsPage"
+import { UserManagementPage } from "@/pages/users/UserManagementPage"
 import { TripCreatePage } from "@/pages/trips/TripCreatePage"
 import { TripDetailPage } from "@/pages/trips/TripDetailPage"
 import { TripsListPage } from "@/pages/trips/TripsListPage"
@@ -24,11 +26,6 @@ export const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />,
-      },
-      {
-        path: "/designsystem",
-        element: <DesignSystemPage />,
-        handle: { crumb: "Design System" },
       },
       {
         element: (
@@ -76,17 +73,28 @@ export const router = createBrowserRouter([
           },
           {
             path: "fuel",
-            element: <FuelExpensesPage />,
-            handle: { crumb: "Fuel & Expenses" },
+            element: <FuelPage />,
+            handle: { crumb: "Fuel Logs" },
           },
           {
             path: "expenses",
-            element: <Navigate to="/fuel" replace />,
+            element: <ExpensesPage />,
+            handle: { crumb: "Expenses" },
           },
           {
             path: "reports",
             element: <ReportsPage />,
             handle: { crumb: "Reports" },
+          },
+          {
+            path: "settings",
+            element: <SettingsPage />,
+            handle: { crumb: "Settings" },
+          },
+          {
+            path: "users",
+            element: <UserManagementPage />,
+            handle: { crumb: "User Management" },
           },
         ],
       },
