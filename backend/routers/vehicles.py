@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from database import get_db
+from dependencies import get_db
 from dependencies import get_current_user
 from schemas.vehicle import VehicleCreate, VehicleUpdate, VehicleResponse
 from services import vehicle_service
