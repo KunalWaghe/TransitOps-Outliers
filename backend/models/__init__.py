@@ -10,6 +10,7 @@ from .maintenance import MaintenanceLog
 from .fuel_log import FuelLog
 from .expense import Expense
 from .vehicle_document import VehicleDocument
+from .setting import AppSetting
 
 __all__ = [
     "Base",
@@ -21,5 +22,6 @@ __all__ = [
     "MaintenanceLog",
     "FuelLog",
     "Expense",
-    "VehicleDocument"
+    "VehicleDocument",
+    "AppSetting"
 ]
