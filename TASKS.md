@@ -47,7 +47,7 @@
 | S1-9 | Implement Auth router: `POST /api/auth/login`, `GET /api/auth/me` | M3 | done | JWT via `python-jose` + `passlib` |
 | S1-10 | Implement RBAC dependency and role guards | M3 | done | 4 roles: fleet_manager, dispatcher, safety_officer, financial_analyst |
 | S1-11 | Create seed script for roles and demo users | M3 | done | `seed.py` |
-| S1-12 | Implement Vehicle router + service: CRUD, search, filter, unique reg validation | M2 | not_started | `routers/vehicles.py`, `services/vehicle_service.py` |
+| S1-12 | Implement Vehicle router + service: CRUD, search, filter, unique reg validation | M2 | done | `routers/vehicles.py`, `services/vehicle_service.py` |
 | S1-13 | Implement Driver router + service: CRUD, search, filter, unique license validation | M2 | not_started | `routers/drivers.py`, `services/driver_service.py` |
 | S1-14 | **CP1 — Hour 2**: Merge auth + login + DB schema to `main` | ALL | not_started | Login page functional, schema live |
 | S1-15 | Wire frontend Vehicle/Driver pages to real APIs | M1 | not_started | Replace mock data with API calls |
