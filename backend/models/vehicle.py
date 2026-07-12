@@ -12,6 +12,7 @@ class VehicleStatus(str, PyEnum):
     AVAILABLE = "Available"
     IN_SHOP = "In Shop"
     ON_TRIP = "On Trip"
+    RETIRED = "Retired"
 
 class Vehicle(Base):
     __tablename__ = "vehicles"

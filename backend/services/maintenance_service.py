@@ -43,10 +43,10 @@ def close_maintenance_log(db: Session, log_id: int):
     log = get_maintenance_log(db, log_id)
     if not log:
         raise HTTPException(status_code=404, detail="Maintenance log not found")
-    if log.status == MaintenanceStatus.CLOSED:
+    if log.status == MaintenanceStatus.CLOSED.value:
         raise HTTPException(status_code=400, detail="Maintenance log is already closed")
         
-    log.status = MaintenanceStatus.CLOSED
+    log.status = MaintenanceStatus.CLOSED.value
     log.closed_at = datetime.utcnow()
     
     # BR10: Restore to Available (unless Retired)
