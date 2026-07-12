@@ -127,7 +127,7 @@ export function VehiclesListPage() {
         </button>
 
         {filteredVehicles.length > 0 ? (
-          <DataTable columns={columns} data={filteredVehicles} keyExtractor={v => v.id} />
+          <DataTable columns={columns} data={filteredVehicles} keyExtractor={v => v.id} pageSize={3} />
         ) : (
           <EmptyState title="No vehicles found" message="Try adjusting your search or filters." />
         )}
