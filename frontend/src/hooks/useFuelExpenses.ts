@@ -1,45 +1,18 @@
 import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { getFuelLogs, createFuelLog } from "@/api/fuel"
+import { getExpenses, createExpense } from "@/api/expenses"
+import { getVehicles } from "@/api/vehicles"
+import type { FuelLogCreate, FuelLogResponse, ExpenseCreate, ExpenseResponse } from "@/api/types"
 
-export interface FuelLog {
-  id: number
+export interface FuelLog extends FuelLogResponse {
   vehicle: string
-  date: string
-  liters: number
-  cost: number
-  odometer_km: number
 }
 
-export interface Expense {
-  id: number
-  trip_id: string
+export interface Expense extends ExpenseResponse {
   vehicle: string
-  toll: number
-  other: number
-  maintenance: number
-  total: number
-  status: string
 }
-
-export const mockFuelLogs: FuelLog[] = [
-  { id: 1, vehicle: "VAN-05", date: "2026-07-05", liters: 42, cost: 3150, odometer_km: 45200 },
-  { id: 2, vehicle: "TRUCK-11", date: "2026-07-06", liters: 110, cost: 8400, odometer_km: 128500 },
-  { id: 3, vehicle: "MINI-03", date: "2026-07-06", liters: 28, cost: 2050, odometer_km: 32100 },
-  { id: 4, vehicle: "VAN-08", date: "2026-07-07", liters: 50, cost: 3750, odometer_km: 28000 },
-]
-
-export const mockExpenses: Expense[] = [
-  { id: 1, trip_id: "TR001", vehicle: "VAN-05", toll: 120, other: 0, maintenance: 0, total: 120, status: "Available" },
-  { id: 2, trip_id: "TR002", vehicle: "TRX-12", toll: 340, other: 150, maintenance: 18000, total: 18490, status: "Completed" },
-]
-
-export const vehicles = [
-  { value: "", label: "Select vehicle" },
-  { value: "VAN-05", label: "VAN-05" },
-  { value: "TRUCK-11", label: "TRUCK-11" },
-  { value: "MINI-03", label: "MINI-03" },
-  { value: "VAN-08", label: "VAN-08" },
-]
 
 export const expenseCategories = [
   { value: "toll", label: "Toll" },
@@ -48,70 +21,91 @@ export const expenseCategories = [
 ]
 
 export function useFuelExpenses() {
-  const [fuelLogs, setFuelLogs] = useState<FuelLog[]>(mockFuelLogs)
-  const [expenses, setExpenses] = useState<Expense[]>(mockExpenses)
-  const [fuelForm, setFuelForm] = useState({ vehicle: "", date: "", liters: "", cost: "", odometer_km: "" })
-  const [expenseForm, setExpenseForm] = useState({ trip_id: "", vehicle: "", category: "toll", amount: "", description: "" })
+  const queryClient = useQueryClient()
+  const [fuelForm, setFuelForm] = useState({ vehicle_id: "", liters: "", cost: "", odometer_km: "" })
+  const [expenseForm, setExpenseForm] = useState({ vehicle_id: "", category: "toll", amount: "", description: "" })
   const [activeTab, setActiveTab] = useState<"fuel" | "expense">("fuel")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { data: rawFuelLogs = [], isLoading: isLoadingFuel } = useQuery({ queryKey: ["fuel"], queryFn: () => getFuelLogs() })
+  const { data: rawExpenses = [], isLoading: isLoadingExpenses } = useQuery({ queryKey: ["expenses"], queryFn: () => getExpenses() })
+  const { data: vehiclesData = [] } = useQuery({ queryKey: ["vehicles"], queryFn: () => getVehicles() })
+
+  const vehicles = useMemo(() => {
+    return [
+      { value: "", label: "Select vehicle" },
+      ...vehiclesData.map(v => ({ value: String(v.id), label: v.registration_number }))
+    ]
+  }, [vehiclesData])
+
+  const fuelLogs: FuelLog[] = useMemo(() => rawFuelLogs.map(f => ({
+    ...f,
+    vehicle: vehiclesData.find(v => v.id === f.vehicle_id)?.registration_number || `Vehicle ${f.vehicle_id}`
+  })), [rawFuelLogs, vehiclesData])
+
+  const expenses: Expense[] = useMemo(() => rawExpenses.map(e => ({
+    ...e,
+    vehicle: vehiclesData.find(v => v.id === e.vehicle_id)?.registration_number || `Vehicle ${e.vehicle_id}`
+  })), [rawExpenses, vehiclesData])
 
   const totalFuelCost = useMemo(() => fuelLogs.reduce((sum, f) => sum + f.cost, 0), [fuelLogs])
-  const totalExpenseCost = useMemo(() => expenses.reduce((sum, e) => sum + e.total, 0), [expenses])
+  const totalExpenseCost = useMemo(() => expenses.reduce((sum, e) => sum + e.amount, 0), [expenses])
   const totalOperationalCost = totalFuelCost + totalExpenseCost
+
+  const fuelMutation = useMutation({
+    mutationFn: (data: FuelLogCreate) => createFuelLog(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["fuel"] })
+      toast.success("Fuel log added")
+      setFuelForm({ vehicle_id: "", liters: "", cost: "", odometer_km: "" })
+    },
+    onError: () => toast.error("Failed to add fuel log")
+  })
+
+  const expenseMutation = useMutation({
+    mutationFn: (data: ExpenseCreate) => createExpense(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] })
+      toast.success("Expense added")
+      setExpenseForm({ vehicle_id: "", category: "toll", amount: "", description: "" })
+    },
+    onError: () => toast.error("Failed to add expense")
+  })
 
   const handleFuelSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!fuelForm.vehicle || !fuelForm.date || !fuelForm.liters || !fuelForm.cost) return
+    if (!fuelForm.vehicle_id || !fuelForm.liters || !fuelForm.cost) return
 
-    setIsSubmitting(true)
-    await new Promise(resolve => setTimeout(resolve, 400))
-    const newLog: FuelLog = {
-      id: Date.now(),
-      vehicle: fuelForm.vehicle,
-      date: fuelForm.date,
+    fuelMutation.mutate({
+      vehicle_id: Number(fuelForm.vehicle_id),
       liters: Number(fuelForm.liters),
       cost: Number(fuelForm.cost),
       odometer_km: Number(fuelForm.odometer_km) || 0,
-    }
-    setFuelLogs(prev => [newLog, ...prev])
-    setFuelForm({ vehicle: "", date: "", liters: "", cost: "", odometer_km: "" })
-    toast.success("Fuel log added")
-    setIsSubmitting(false)
+    })
   }
 
   const handleExpenseSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!expenseForm.vehicle || !expenseForm.amount) return
+    if (!expenseForm.vehicle_id || !expenseForm.amount) return
 
-    setIsSubmitting(true)
-    await new Promise(resolve => setTimeout(resolve, 400))
-    const amount = Number(expenseForm.amount)
-    const newExpense: Expense = {
-      id: Date.now(),
-      trip_id: expenseForm.trip_id || "N/A",
-      vehicle: expenseForm.vehicle,
-      toll: expenseForm.category === "toll" ? amount : 0,
-      other: expenseForm.category === "misc" ? amount : 0,
-      maintenance: expenseForm.category === "maintenance" ? amount : 0,
-      total: amount,
-      status: "Completed",
-    }
-    setExpenses(prev => [newExpense, ...prev])
-    setExpenseForm({ trip_id: "", vehicle: "", category: "toll", amount: "", description: "" })
-    toast.success("Expense added")
-    setIsSubmitting(false)
+    expenseMutation.mutate({
+      vehicle_id: Number(expenseForm.vehicle_id),
+      category: expenseForm.category,
+      amount: Number(expenseForm.amount),
+      description: expenseForm.description || null,
+    })
   }
 
   const highestSpenders = useMemo(() => {
     const map = new Map<string, number>()
     fuelLogs.forEach(f => map.set(f.vehicle, (map.get(f.vehicle) || 0) + f.cost))
-    expenses.forEach(e => map.set(e.vehicle, (map.get(e.vehicle) || 0) + e.total))
+    expenses.forEach(e => map.set(e.vehicle, (map.get(e.vehicle) || 0) + e.amount))
     return Array.from(map.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
   }, [fuelLogs, expenses])
 
   const maxSpender = highestSpenders[0]?.[1] || 1
+  const isLoading = isLoadingFuel || isLoadingExpenses
 
   return {
     fuelLogs,
@@ -122,7 +116,8 @@ export function useFuelExpenses() {
     setExpenseForm,
     activeTab,
     setActiveTab,
-    isSubmitting,
+    isSubmitting: fuelMutation.isPending || expenseMutation.isPending,
+    isLoading,
     totalFuelCost,
     totalExpenseCost,
     totalOperationalCost,
@@ -130,5 +125,7 @@ export function useFuelExpenses() {
     handleExpenseSubmit,
     highestSpenders,
     maxSpender,
+    vehicles,
+    expenseCategories,
   }
 }

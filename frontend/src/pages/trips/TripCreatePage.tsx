@@ -23,6 +23,7 @@ export function TripCreatePage() {
     updateField,
     handleSubmit,
     selectedDriver,
+    selectedVehicle,
     vehicleOptions,
     driverOptions,
   } = useTripCreate()
