@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+import csv
+import io
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from dependencies import get_db
@@ -6,6 +9,7 @@ from dependencies import get_current_user
 from schemas.maintenance import MaintenanceCreate, MaintenanceResponse
 from services import maintenance_service
 from models.user import User
+from models.maintenance import MaintenanceLog
 
 router = APIRouter(
     prefix="/api/maintenance",
@@ -28,6 +32,39 @@ def read_maintenance_logs(
     current_user: User = Depends(get_current_user)
 ):
     return maintenance_service.get_maintenance_logs(db, skip=skip, limit=limit, vehicle_id=vehicle_id, status=status)
+
+@router.get("/export/csv")
+def export_maintenance_csv(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    logs = db.query(MaintenanceLog).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "Log ID", "Vehicle ID", "Vehicle", "Service Type", "Cost",
+        "Status", "Notes", "Created At", "Closed At"
+    ])
+
+    for log in logs:
+        writer.writerow([
+            log.id,
+            log.vehicle_id,
+            log.vehicle.registration_number if log.vehicle else "",
+            log.type,
+            log.cost,
+            log.status,
+            log.notes or "",
+            log.created_at.strftime("%Y-%m-%d %H:%M:%S") if log.created_at else "",
+            log.closed_at.strftime("%Y-%m-%d %H:%M:%S") if log.closed_at else "",
+        ])
+
+    output.seek(0)
+
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=maintenance_log.csv"}
+    )
 
 @router.post("/", response_model=MaintenanceResponse)
 def create_maintenance_log(maintenance: MaintenanceCreate, db: Session = Depends(get_db), current_user: User = Depends(require_fleet_manager)):

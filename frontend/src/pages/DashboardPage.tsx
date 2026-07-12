@@ -22,7 +22,6 @@ import { cn } from "@/lib/utils"
 import {
   useDashboard,
   utilizationData,
-  alerts,
   type TripRow,
 } from "@/hooks/useDashboard"
 
@@ -125,9 +124,8 @@ export function DashboardPage() {
         <KpiCard label="Fleet Utilization" value={`${kpiStats.fleetUtilization}%`} icon={<BarChart3 size={16} />} status="good" showProgress progress={kpiStats.fleetUtilization} />
       </div>
 
-      {/* Middle section: chart + alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[var(--space-md)]">
-        <Card className="lg:col-span-2 flex flex-col h-96">
+      {/* Utilization chart */}
+      <Card className="flex flex-col h-96">
           <div className="flex items-center justify-between mb-6">
             <h2
               className="font-semibold text-[var(--brand-ink)]"
@@ -173,46 +171,6 @@ export function DashboardPage() {
             </ResponsiveContainer>
           </div>
         </Card>
-
-        <Card className="flex flex-col h-96 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--destructive)]/5 blur-[50px] rounded-full translate-x-1/3 -translate-y-1/3 pointer-events-none" />
-          <h2
-            className="font-semibold text-[var(--brand-ink)] mb-4 flex items-center gap-2"
-            style={{ fontSize: "var(--text-title)", lineHeight: "var(--leading-title)" }}
-          >
-            <span className="w-2 h-2 rounded-full bg-[var(--destructive)]" />
-            Priority Alerts
-          </h2>
-          <div className="flex flex-col gap-3 overflow-y-auto pr-1 custom-scrollbar">
-            {alerts.map(alert => (
-              <div
-                key={alert.id}
-                className="p-4 rounded-[var(--radius-md)] bg-[var(--background)] border border-[var(--border)] flex gap-3 items-start cursor-pointer group hover:border-[var(--brand-hairline)] transition-colors"
-              >
-                <span
-                  className={cn(
-                    "w-1.5 h-1.5 rounded-full mt-2 shrink-0",
-                    alert.type === "error" && "bg-[var(--destructive)]",
-                    alert.type === "warning" && "bg-[#dd5b00]",
-                    alert.type === "info" && "bg-[var(--brand-ink-faint)]"
-                  )}
-                />
-                <div>
-                  <p
-                    className="font-medium text-[var(--brand-ink)] leading-relaxed mb-1 group-hover:text-[var(--brand-primary)] transition-colors"
-                    style={{ fontSize: "var(--text-body-sm)" }}
-                  >
-                    {alert.message}
-                  </p>
-                  <p className="text-[var(--brand-ink-muted)]" style={{ fontSize: "var(--text-caption)" }}>
-                    {alert.meta}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
 
       {/* Recent trips table */}
       <Card>

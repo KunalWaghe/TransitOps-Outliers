@@ -1,4 +1,4 @@
-import { Bell, LogOut } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
@@ -11,19 +11,6 @@ export function HeaderActions() {
 
   return (
     <div className="flex items-center gap-[var(--space-xs)]">
-      <button
-        type="button"
-        aria-label="Notifications"
-        className={cn(
-          "w-8 h-8 rounded-[var(--radius-full)] flex items-center justify-center",
-          "text-[var(--brand-ink-muted)] hover:bg-[var(--brand-canvas-soft)] hover:text-[var(--brand-ink)]",
-          "transition-colors duration-150",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)]"
-        )}
-      >
-        <Bell size={17} aria-hidden="true" />
-      </button>
-
       <button
         type="button"
         onClick={logout}
