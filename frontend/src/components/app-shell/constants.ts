@@ -32,6 +32,13 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    id: "system",
+    label: "System",
+    items: [
+      { id: "settings",     label: "Settings",    icon: "Settings",        to: "/settings" },
+    ],
+  },
+  {
     id: "dev",
     label: "Development",
     items: [

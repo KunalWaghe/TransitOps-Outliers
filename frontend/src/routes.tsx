@@ -13,6 +13,7 @@ import { DriversListPage } from "@/pages/drivers/DriversListPage"
 import { FuelExpensesPage } from "@/pages/fuel/FuelExpensesPage"
 import { MaintenancePage } from "@/pages/maintenance/MaintenancePage"
 import { ReportsPage } from "@/pages/reports/ReportsPage"
+import { SettingsPage } from "@/pages/settings/SettingsPage"
 import { TripCreatePage } from "@/pages/trips/TripCreatePage"
 import { TripDetailPage } from "@/pages/trips/TripDetailPage"
 import { TripsListPage } from "@/pages/trips/TripsListPage"
@@ -87,6 +88,11 @@ export const router = createBrowserRouter([
             path: "reports",
             element: <ReportsPage />,
             handle: { crumb: "Reports" },
+          },
+          {
+            path: "settings",
+            element: <SettingsPage />,
+            handle: { crumb: "Settings" },
           },
         ],
       },

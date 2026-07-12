@@ -61,15 +61,30 @@ function KpiCard({ label, value, subValue, icon, trend }: KpiCardProps) {
 }
 
 export function ReportsPage() {
-  const { year, setYear, financialAnalyst, handleExport } = useReports()
+  const { year, setYear, financialAnalyst, handleExport, exportFormat, setExportFormat, isExporting } = useReports()
 
   return (
     <div className="space-y-[var(--space-lg)]">
       <PageHeader title="Reports & Analytics" subtitle="Operational performance and financial metrics.">
         {financialAnalyst && (
-          <Button variant="secondary" leftIcon={<Download size={18} />} onClick={handleExport}>
-            Export Report
-          </Button>
+          <div className="flex items-center gap-2">
+            <select
+              value={exportFormat}
+              onChange={e => setExportFormat(e.target.value as "csv" | "pdf")}
+              disabled={isExporting}
+              className={cn(
+                "bg-[var(--background)] border border-[var(--input)] text-[var(--brand-ink)] rounded-[var(--radius-md)] px-3 py-1.5",
+                "focus:outline-none focus:ring-1 focus:ring-[var(--ring)]"
+              )}
+              style={{ fontSize: "var(--text-caption)" }}
+            >
+              <option value="csv">CSV</option>
+              <option value="pdf">PDF</option>
+            </select>
+            <Button variant="secondary" leftIcon={<Download size={18} />} onClick={handleExport} isLoading={isExporting}>
+              Export Report
+            </Button>
+          </div>
         )}
       </PageHeader>
 
