@@ -88,14 +88,13 @@
 | S3-2 | Add dashboard filter bar (vehicle type, status, region) | M1 | not_started | |
 | S3-3 | Implement 3 charts with recharts: fuel efficiency, operational cost, fleet utilization | M1 | not_started | Bar/line/pie |
 | S3-4 | Implement Dashboard KPI endpoint | M3 | done | Aggregate stats (active trips, total expenses, etc.) |
-| S3-5 | Implement Dashboard chart endpoint `GET /api/dashboard/charts` | M3 | not_started | |
+| S3-5 | Implement Dashboard chart endpoint `GET /api/dashboard/charts` | M3 | done | Returns utilization, cost trends |
 | S3-6 | Implement CSV export endpoint `GET /api/reports/export/csv` | M2 | not_started | Financial analyst role only |
 | S3-7 | Build Reports page with charts and export button | M1 | not_started | |
 | S3-8 | **CP3 — Hour 6**: Merge all P0 features to `main` | ALL | not_started | Dashboard with real data |
 | S3-9 | (P1) Implement PDF export endpoint `GET /api/reports/export/pdf` | M2 | not_started | Use `reportlab` |
 | S3-10 | (P1) Add dark mode toggle + ThemeContext | M1 | not_started | Verify layout doesn't break |
-| S3-11 | (P1) Implement email reminder endpoint for expiring licenses | M3 | not_started | No SMTP; identify 30-day expirations and show in UI |
-| S3-12 | (P1) Build UI alert for expiring license reminders | M1 | not_started | |
+| S3-11 | (P1) Implement email reminder endpoint for expiring licenses | M3 | done | No SMTP; identify 30-day expirations and show in UI |
 | S3-13 | (P1) Vehicle document upload (registration, insurance) | M1 / M2 | not_started | Local disk storage, backend endpoint |
 | S3-14 | (P1) Add pagination to list views | M1 | not_started | Backend + frontend |
 
