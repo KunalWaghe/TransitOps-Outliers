@@ -7,7 +7,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from database import get_db
+from dependencies import get_db
 from dependencies import get_current_user
 from models.user import User
 from models.trip import Trip
