@@ -2,7 +2,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, fuel_logs, expenses, dashboard, vehicles, drivers, trips, maintenance
+from routers import auth, fuel_logs, expenses, dashboard, vehicles, drivers, trips, maintenance, reports
 from services.scheduler import check_expiring_licenses
 
 @asynccontextmanager
@@ -29,6 +29,7 @@ app.include_router(expenses.router)
 app.include_router(dashboard.router)
 app.include_router(trips.router)
 app.include_router(maintenance.router)
+app.include_router(reports.router)
 
 @app.get("/")
 def read_root():

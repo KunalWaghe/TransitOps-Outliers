@@ -87,7 +87,7 @@
 | S3-3 | Implement 3 charts with recharts: fuel efficiency, operational cost, fleet utilization | M1 | done | Dashboard utilization bar chart; Reports revenue bar chart |
 | S3-4 | Implement Dashboard KPI endpoint `GET /api/dashboard/kpis` | M3 | not_started | Filter by type/status/region |
 | S3-5 | Implement Dashboard chart endpoint `GET /api/dashboard/charts` | M3 | not_started | |
-| S3-6 | Implement CSV export endpoint `GET /api/reports/export/csv` | M2 | not_started | Financial analyst role only |
+| S3-6 | Implement CSV export endpoint `GET /api/reports/export/csv` | M2 | done | Financial analyst role only |
 | S3-7 | Build Reports page with charts and export button | M1 | done | `/reports`; KPI cards; monthly revenue chart; top costliest vehicles; export button |
 | S3-8 | **CP3 — Hour 6**: Merge all P0 features to `main` | ALL | not_started | Dashboard with real data |
 | S3-9 | (P1) Implement PDF export endpoint `GET /api/reports/export/pdf` | M2 | not_started | Use `reportlab` |
