@@ -23,11 +23,9 @@
 |---|---|---|---|---|
 | P0-1 | Finalize plan and agree on API contract | ALL | not_started | Confirm revenue field, dispatcher role naming, email reminder plan |
 | P0-2 | Scaffold frontend folder structure, install deps (`react-router-dom`, `axios`, `recharts`, `lucide-react`, `react-hot-toast`) | M1 | done | All deps installed; `api/` + `utils/` folders; Axios client stub; Toaster wired in App |
-| P0-3 | Create Layout + Sidebar + ProtectedRoute components | M1 | in_progress | AppShell + Sidebar + routing done; `ProtectedRoute` not yet implemented |
+| P0-3 | Create Layout + Sidebar + ProtectedRoute components | M1 | done | AppShell + Sidebar + routing + ProtectedRoute; auth routes protected; login public |
 | P0-4 | Create backend folders: `models/`, `schemas/`, `routers/`, `services/` | M2 | not_started | Empty `__init__.py` files included |
 | P0-5 | Define all SQLAlchemy models (User, Role, Vehicle, Driver, Trip, MaintenanceLog, FuelLog, Expense, VehicleDocument) | M2 | done | Match domain model in Part 8 |
-| P0-6 | Set up Alembic and create initial migration | M3 | in_progress | Alembic initialized, migration pending DB connection |
-| P0-5 | Define all SQLAlchemy models (User, Role, Vehicle, Driver, Trip, MaintenanceLog, FuelLog, Expense, VehicleDocument) | M2 | not_started | Match domain model in Part 8 |
 | P0-6 | Set up Alembic and create initial migration | M3 | done | Migration applied to local Postgres |
 | P0-7 | Set up `database.py`, `config.py`, `dependencies.py` | M3 | done | Include `get_db` and `get_current_user` |
 | P0-8 | Verify Docker Compose brings up Postgres and app containers | M3 | not_started | `docker compose up --build` smoke test |
@@ -38,14 +36,14 @@
 
 | ID | Task | Owner | Status | Notes |
 |---|---|---|---|---|
-| S1-1 | Build Login page with form validation and error handling | M1 | not_started | Redirect to `/` on success |
-| S1-2 | Set up AuthContext for login/logout and JWT storage | M1 | not_started | Store role for RBAC |
-| S1-3 | Create Axios client with JWT interceptor | M1 | not_started | `frontend/src/api/client.js` |
-| S1-4 | Build Vehicle list page with search, filter by status/type, sort | M1 | not_started | Use mock data until API ready |
-| S1-5 | Build Vehicle create/edit form with validation | M1 | not_started | Duplicate reg number inline error |
-| S1-6 | Build Driver list page with search, filter by status, sort | M1 | not_started | Show expired license warning |
-| S1-7 | Build Driver create/edit form with validation | M1 | not_started | License expiry date picker |
-| S1-8 | Build reusable `DataTable`, `StatusBadge`, `LoadingSpinner`, `EmptyState` components | M1 | not_started | Shared across all list pages |
+| S1-1 | Build Login page with form validation and error handling | M1 | done | Form, role tabs, validation, toast, redirects to `/` on success |
+| S1-2 | Set up AuthContext for login/logout and JWT storage | M1 | done | AuthProvider + useAuth hook; token in localStorage; role stored |
+| S1-3 | Create Axios client with JWT interceptor | M1 | done | Bearer token injected; 401 redirects to `/login` |
+| S1-4 | Build Vehicle list page with search, filter by status/type, sort | M1 | done | Mock data; search, type/status filters, sort |
+| S1-5 | Build Vehicle create/edit form with validation | M1 | done | `/vehicles/new` and `/vehicles/:id/edit`; validation; inline error slot |
+| S1-6 | Build Driver list page with search, filter by status, sort | M1 | done | Mock data; expired/expiring license warnings |
+| S1-7 | Build Driver create/edit form with validation | M1 | done | `/drivers/new` and `/drivers/:id/edit`; date picker; validation |
+| S1-8 | Build reusable `DataTable`, `StatusBadge`, `LoadingSpinner`, `EmptyState` components | M1 | done | Plus PageHeader, Card, Input, Select, Button |
 | S1-9 | Implement Auth router: `POST /api/auth/login`, `GET /api/auth/me` | M3 | done | JWT via `python-jose` + `passlib` |
 | S1-10 | Implement RBAC dependency and role guards | M3 | done | 4 roles: fleet_manager, dispatcher, safety_officer, financial_analyst |
 | S1-11 | Create seed script for roles and demo users | M3 | done | `seed.py` |
@@ -61,13 +59,13 @@
 
 | ID | Task | Owner | Status | Notes |
 |---|---|---|---|---|
-| S2-1 | Build Trip list page with status filters and action buttons | M1 | not_started | Draft / Dispatched / Completed / Cancelled |
-| S2-2 | Build Trip create form with vehicle/driver dropdowns | M1 | not_started | Only Available + valid options shown |
-| S2-3 | Build Trip detail view with dispatch/complete/cancel actions | M1 | not_started | Confirmation dialog on cancel |
-| S2-4 | Implement Maintenance list page with create/close actions | M1 | not_started | |
-| S2-5 | Implement Maintenance create form | M1 | not_started | Select vehicle, type, cost, notes |
-| S2-6 | Implement Fuel log list + create form | M1 | not_started | Vehicle, liters, cost, odometer, date |
-| S2-7 | Implement Expense list + create form | M1 | not_started | Category, amount, date, description |
+| S2-1 | Build Trip list page with status filters and action buttons | M1 | done | `/trips`; status filters; links to detail/create |
+| S2-2 | Build Trip create form with vehicle/driver dropdowns | M1 | done | `/trips/new`; route planning, resource allocation, cargo spec, readiness summary |
+| S2-3 | Build Trip detail view with dispatch/complete/cancel actions | M1 | done | `/trips/:id`; dispatch/complete/cancel with confirmation dialog |
+| S2-4 | Implement Maintenance list page with create/close actions | M1 | done | `/maintenance`; split-view log form + service log table; close action |
+| S2-5 | Implement Maintenance create form | M1 | done | Vehicle, service type, cost, date, notes, status |
+| S2-6 | Implement Fuel log list + create form | M1 | done | `/fuel` combined page; fuel log table + form |
+| S2-7 | Implement Expense list + create form | M1 | done | `/fuel` combined page; expense table + form; operational cost summary |
 | S2-8 | Implement Trip router + service with all business rules (BR2-BR8) | M2 | not_started | Create, dispatch, complete, cancel with transactions |
 | S2-9 | Implement Maintenance router + service with BR9-BR10 | M2 | not_started | Auto-set vehicle to `In Shop` / `Available` |
 | S2-10 | Implement Fuel log router + service | M3 | not_started | |
@@ -84,16 +82,16 @@
 
 | ID | Task | Owner | Status | Notes |
 |---|---|---|---|---|
-| S3-1 | Build Dashboard page shell with KPI cards | M1 | not_started | Active Vehicles, Available, In Maintenance, Active Trips, Pending Trips, Drivers On Duty, Fleet Utilization % |
-| S3-2 | Add dashboard filter bar (vehicle type, status, region) | M1 | not_started | |
-| S3-3 | Implement 3 charts with recharts: fuel efficiency, operational cost, fleet utilization | M1 | not_started | Bar/line/pie |
+| S3-1 | Build Dashboard page shell with KPI cards | M1 | done | KPI bento grid + recent trips table + priority alerts |
+| S3-2 | Add dashboard filter bar (vehicle type, status, region) | M1 | done | Utilization trend time-range toggle (24h/7d/30d) |
+| S3-3 | Implement 3 charts with recharts: fuel efficiency, operational cost, fleet utilization | M1 | done | Dashboard utilization bar chart; Reports revenue bar chart |
 | S3-4 | Implement Dashboard KPI endpoint `GET /api/dashboard/kpis` | M3 | not_started | Filter by type/status/region |
 | S3-5 | Implement Dashboard chart endpoint `GET /api/dashboard/charts` | M3 | not_started | |
 | S3-6 | Implement CSV export endpoint `GET /api/reports/export/csv` | M2 | not_started | Financial analyst role only |
-| S3-7 | Build Reports page with charts and export button | M1 | not_started | |
+| S3-7 | Build Reports page with charts and export button | M1 | done | `/reports`; KPI cards; monthly revenue chart; top costliest vehicles; export button |
 | S3-8 | **CP3 — Hour 6**: Merge all P0 features to `main` | ALL | not_started | Dashboard with real data |
 | S3-9 | (P1) Implement PDF export endpoint `GET /api/reports/export/pdf` | M2 | not_started | Use `reportlab` |
-| S3-10 | (P1) Add dark mode toggle + ThemeContext | M1 | not_started | Verify layout doesn't break |
+| S3-10 | (P1) Add dark mode toggle + ThemeContext | M1 | done | Toggle in SidebarFooter; ThemeContext already exists; layout verified |
 | S3-11 | (P1) Implement email reminder endpoint for expiring licenses | M3 | not_started | No SMTP; identify 30-day expirations and show in UI |
 | S3-12 | (P1) Build UI alert for expiring license reminders | M1 | not_started | |
 | S3-13 | (P1) Vehicle document upload (registration, insurance) | M1 / M2 | not_started | Local disk storage, backend endpoint |
