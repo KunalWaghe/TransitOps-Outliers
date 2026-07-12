@@ -22,11 +22,13 @@
 | ID | Task | Owner | Status | Notes |
 |---|---|---|---|---|
 | P0-1 | Finalize plan and agree on API contract | ALL | not_started | Confirm revenue field, dispatcher role naming, email reminder plan |
-| P0-2 | Scaffold frontend folder structure, install deps (`react-router-dom`, `axios`, `recharts`, `lucide-react`, `react-hot-toast`) | M1 | not_started | Create `api/`, `context/`, `components/`, `pages/`, `utils/` |
+| P0-2 | Scaffold frontend folder structure, install deps (`react-router-dom`, `axios`, `recharts`, `lucide-react`, `react-hot-toast`) | M1 | in_progress | Vite+React+TS+shadcn scaffold done; ThemeContext exists; deps + `api/`/`components/`/`pages/`/`utils/` folders pending |
 | P0-3 | Create Layout + Sidebar + ProtectedRoute components | M1 | not_started | Navigable shell with sidebar |
 | P0-4 | Create backend folders: `models/`, `schemas/`, `routers/`, `services/` | M2 | not_started | Empty `__init__.py` files included |
 | P0-5 | Define all SQLAlchemy models (User, Role, Vehicle, Driver, Trip, MaintenanceLog, FuelLog, Expense, VehicleDocument) | M2 | done | Match domain model in Part 8 |
 | P0-6 | Set up Alembic and create initial migration | M3 | in_progress | Alembic initialized, migration pending DB connection |
+| P0-5 | Define all SQLAlchemy models (User, Role, Vehicle, Driver, Trip, MaintenanceLog, FuelLog, Expense, VehicleDocument) | M2 | not_started | Match domain model in Part 8 |
+| P0-6 | Set up Alembic and create initial migration | M3 | done | Migration applied to local Postgres |
 | P0-7 | Set up `database.py`, `config.py`, `dependencies.py` | M3 | done | Include `get_db` and `get_current_user` |
 | P0-8 | Verify Docker Compose brings up Postgres and app containers | M3 | not_started | `docker compose up --build` smoke test |
 
