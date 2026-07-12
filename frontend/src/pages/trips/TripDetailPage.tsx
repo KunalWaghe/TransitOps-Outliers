@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { AlertTriangle, ArrowLeft, CheckCircle2, MapPin, Route, Send, Truck, User, XCircle } from "lucide-react"
+import { AlertTriangle, ArrowLeft, CheckCircle2, MapPin, Route, Send, Truck, User, XCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/shared/Button"
 import { Card } from "@/components/shared/Card"
 import { PageHeader } from "@/components/shared/PageHeader"
@@ -24,6 +24,23 @@ export function TripDetailPage() {
     Dispatched: "dispatched",
     Completed: "completed",
     Cancelled: "cancelled",
+  }
+
+  if (isLoading && !trip) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="animate-spin text-[var(--brand-primary)]" size={32} />
+      </div>
+    )
+  }
+
+  if (!trip) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
+        <p className="text-[var(--brand-ink-muted)]">Trip not found.</p>
+        <Button onClick={() => navigate("/trips")}>Back to Trips</Button>
+      </div>
+    )
   }
 
   return (
