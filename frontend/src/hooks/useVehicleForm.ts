@@ -1,11 +1,15 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import toast from "react-hot-toast"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { createVehicle, getVehicle, updateVehicle } from "@/api/vehicles"
+import type { VehicleCreate, VehicleType, VehicleStatus } from "@/api/types"
 
 export function useVehicleForm() {
   const { id } = useParams()
   const navigate = useNavigate()
   const isEdit = Boolean(id)
+  const queryClient = useQueryClient()
 
   const [form, setForm] = useState({
     registration_number: "",
@@ -18,7 +22,47 @@ export function useVehicleForm() {
     status: "Available",
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { data: vehicle, isLoading } = useQuery({
+    queryKey: ["vehicles", id],
+    queryFn: () => getVehicle(Number(id)),
+    enabled: isEdit,
+  })
+
+  useEffect(() => {
+    if (vehicle) {
+      setForm({
+        registration_number: vehicle.registration_number,
+        name: vehicle.name,
+        type: vehicle.type,
+        max_capacity_kg: String(vehicle.max_capacity_kg),
+        odometer_km: String(vehicle.odometer_km),
+        acquisition_cost: String(vehicle.acquisition_cost),
+        region: vehicle.region,
+        status: vehicle.status ?? "Available",
+      })
+    }
+  }, [vehicle])
+
+  const createMutation = useMutation({
+    mutationFn: (data: VehicleCreate) => createVehicle(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vehicles"] })
+      toast.success("Vehicle created")
+      navigate("/vehicles")
+    },
+    onError: () => toast.error("Failed to save vehicle"),
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: (data: VehicleCreate) => updateVehicle(Number(id), data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["vehicles"] })
+      toast.success("Vehicle updated")
+      navigate("/vehicles")
+    },
+    onError: () => toast.error("Failed to save vehicle"),
+  })
 
   const updateField = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -42,17 +86,25 @@ export function useVehicleForm() {
     e.preventDefault()
     if (!validate()) return
 
-    setIsSubmitting(true)
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500))
-      toast.success(isEdit ? "Vehicle updated" : "Vehicle created")
-      navigate("/vehicles")
-    } catch {
-      toast.error("Failed to save vehicle")
-    } finally {
-      setIsSubmitting(false)
+    const payload: VehicleCreate = {
+      registration_number: form.registration_number,
+      name: form.name,
+      type: form.type as VehicleType,
+      max_capacity_kg: Number(form.max_capacity_kg),
+      odometer_km: Number(form.odometer_km) || 0,
+      acquisition_cost: Number(form.acquisition_cost),
+      region: form.region,
+      status: form.status as VehicleStatus,
+    }
+
+    if (isEdit) {
+      updateMutation.mutate(payload)
+    } else {
+      createMutation.mutate(payload)
     }
   }
+
+  const isSubmitting = createMutation.isPending || updateMutation.isPending
 
   return {
     id,
@@ -63,5 +115,6 @@ export function useVehicleForm() {
     updateField,
     handleSubmit,
     navigate,
+    isLoading,
   }
 }
