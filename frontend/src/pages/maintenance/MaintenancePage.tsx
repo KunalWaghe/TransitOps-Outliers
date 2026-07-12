@@ -9,8 +9,6 @@ import { StatusBadge } from "@/components/shared/StatusBadge"
 import { cn } from "@/lib/utils"
 import {
   useMaintenance,
-  vehicles,
-  serviceTypes,
   type MaintenanceRecord,
 } from "@/hooks/useMaintenance"
 
@@ -20,10 +18,13 @@ export function MaintenancePage() {
     form,
     errors,
     isSubmitting,
+    isLoading,
     updateField,
     handleSubmit,
     handleClose,
     totalCost,
+    vehicles,
+    serviceTypes,
   } = useMaintenance()
 
   const columns: Column<MaintenanceRecord>[] = [
@@ -31,7 +32,7 @@ export function MaintenancePage() {
     { key: "vehicle", header: "Vehicle", render: r => <span className="font-medium">{r.vehicle}</span> },
     { key: "service_type", header: "Service", render: r => <span className="text-[var(--brand-ink-muted)]">{r.service_type}</span> },
     { key: "cost", header: "Cost", align: "right", render: r => <span className="font-mono">₹{r.cost.toLocaleString("en-IN")}</span> },
-    { key: "status", header: "Status", render: r => <StatusBadge status={r.status} variant={r.status === "Active" ? "in_maintenance" : "completed"} /> },
+    { key: "status", header: "Status", render: r => <StatusBadge status={r.status || "Unknown"} variant={r.status === "Active" ? "in_maintenance" : "completed"} /> },
     {
       key: "actions",
       header: "",
@@ -62,17 +63,17 @@ export function MaintenancePage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <Select
                 label="Vehicle"
-                value={form.vehicle}
-                onChange={e => updateField("vehicle", e.target.value)}
+                value={form.vehicle_id}
+                onChange={e => updateField("vehicle_id", e.target.value)}
                 options={vehicles}
-                error={errors.vehicle}
+                error={errors.vehicle_id}
               />
               <Select
                 label="Service Type"
-                value={form.service_type}
-                onChange={e => updateField("service_type", e.target.value)}
+                value={form.type}
+                onChange={e => updateField("type", e.target.value)}
                 options={serviceTypes}
-                error={errors.service_type}
+                error={errors.type}
               />
               <div className="grid grid-cols-2 gap-4">
                 <Input
@@ -83,23 +84,16 @@ export function MaintenancePage() {
                   error={errors.cost}
                   placeholder="0.00"
                 />
-                <Input
-                  label="Date"
-                  type="date"
-                  value={form.date}
-                  onChange={e => updateField("date", e.target.value)}
-                  error={errors.date}
+                <Select
+                  label="Status"
+                  value={form.status}
+                  onChange={e => updateField("status", e.target.value)}
+                  options={[
+                    { value: "Active", label: "In Shop" },
+                    { value: "Closed", label: "Closed" },
+                  ]}
                 />
               </div>
-              <Select
-                label="Status"
-                value={form.status}
-                onChange={e => updateField("status", e.target.value)}
-                options={[
-                  { value: "Active", label: "In Shop" },
-                  { value: "Completed", label: "Completed" },
-                ]}
-              />
               <div>
                 <label className="block mb-1.5 font-medium text-[var(--brand-ink-muted)]" style={{ fontSize: "var(--text-caption)" }}>
                   Notes
@@ -145,7 +139,7 @@ export function MaintenancePage() {
               </button>
             </div>
             <div className="flex-1">
-              <DataTable columns={columns} data={records} keyExtractor={r => r.id} />
+              <DataTable columns={columns} data={records} keyExtractor={r => r.id} isLoading={isLoading} />
             </div>
             <div className="mt-4 pt-4 border-t border-[var(--border)] flex justify-between items-center text-[var(--brand-ink-muted)]" style={{ fontSize: "var(--text-caption)" }}>
               <span>Total maintenance cost</span>

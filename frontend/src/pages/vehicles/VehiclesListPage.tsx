@@ -46,7 +46,7 @@ export function VehiclesListPage() {
     {
       key: "status",
       header: "Status",
-      render: v => <StatusBadge status={v.status} variant={statusVariantMap[v.status] ?? "neutral"} />,
+      render: v => <StatusBadge status={v.status || "Unknown"} variant={statusVariantMap[v.status || ""] ?? "neutral"} />,
     },
     {
       key: "actions",
