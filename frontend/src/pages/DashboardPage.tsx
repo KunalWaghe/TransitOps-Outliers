@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import {
   ArrowUpRight,
   BarChart3,
@@ -20,19 +19,13 @@ import { DataTable, type Column } from "@/components/shared/DataTable"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { cn } from "@/lib/utils"
-
-const utilizationData = [
-  { hour: "00:00", value: 40 },
-  { hour: "03:00", value: 55 },
-  { hour: "06:00", value: 60 },
-  { hour: "09:00", value: 45 },
-  { hour: "12:00", value: 70 },
-  { hour: "15:00", value: 85 },
-  { hour: "18:00", value: 75 },
-  { hour: "21:00", value: 80 },
-  { hour: "23:00", value: 65 },
-  { hour: "Now", value: 71 },
-]
+import {
+  useDashboard,
+  utilizationData,
+  trips,
+  alerts,
+  type TripRow,
+} from "@/hooks/useDashboard"
 
 interface KpiCardProps {
   label: string
@@ -90,18 +83,6 @@ function KpiCard({ label, value, subValue, icon, status = "good", showProgress, 
   )
 }
 
-interface TripRow {
-  id: string
-  vehicle: string
-  driver: string
-  driverInitials: string
-  route: string
-  status: string
-  statusVariant: Parameters<typeof StatusBadge>[0]["variant"]
-  eta: string
-  etaHighlight?: string
-}
-
 const tripColumns: Column<TripRow>[] = [
   { key: "id", header: "Trip ID", render: row => <span className="font-mono text-[var(--brand-ink-muted)]">{row.id}</span> },
   { key: "vehicle", header: "Vehicle", render: row => <span className="font-medium">{row.vehicle}</span> },
@@ -126,32 +107,8 @@ const tripColumns: Column<TripRow>[] = [
   { key: "eta", header: "ETA", align: "right", render: row => <span className="font-mono text-[var(--brand-ink-muted)]">{row.eta}</span> },
 ]
 
-const trips: TripRow[] = [
-  { id: "TR-8429", vehicle: "Bus-042", driver: "John Doe", driverInitials: "JD", route: "Downtown Express", status: "En Route", statusVariant: "active", eta: "14:30" },
-  { id: "TR-8430", vehicle: "Van-11A", driver: "Alice Smith", driverInitials: "AS", route: "Northside Loop", status: "Delayed", statusVariant: "delayed", eta: "15:15", etaHighlight: "+15m" },
-  { id: "TR-8431", vehicle: "Bus-019", driver: "Mike Ross", driverInitials: "MR", route: "Airport Shuttle", status: "Boarding", statusVariant: "dispatched", eta: "14:45" },
-  { id: "TR-8425", vehicle: "Van-08B", driver: "Sarah Jones", driverInitials: "SJ", route: "South Park Run", status: "Completed", statusVariant: "completed", eta: "13:50" },
-]
-
-interface Alert {
-  id: string
-  type: "error" | "warning" | "info"
-  message: string
-  meta: string
-}
-
-const alerts: Alert[] = [
-  { id: "1", type: "error", message: "Vehicle V-104 reported engine temperature anomaly.", meta: "Route 42 • 10 mins ago" },
-  { id: "2", type: "warning", message: "Driver delay reported at Checkpoint Delta.", meta: "Trip TR-892 • 25 mins ago" },
-  { id: "3", type: "info", message: "Routine maintenance schedule generated for Fleet B.", meta: "System • 1 hour ago" },
-]
-
 export function DashboardPage() {
-  const [currentHour, setCurrentHour] = useState("12h")
-
-  useEffect(() => {
-    document.title = "TransitOps Dashboard"
-  }, [])
+  const { currentHour, setCurrentHour } = useDashboard()
 
   return (
     <div className="space-y-[var(--space-lg)]">
