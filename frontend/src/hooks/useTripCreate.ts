@@ -1,18 +1,11 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
-
-export const mockDrivers = [
-  { value: "1", label: "Sarah Jenkins (LMV, 8h 15m remaining)" },
-  { value: "2", label: "Michael Chen (HGV, 6h 30m remaining)" },
-  { value: "3", label: "David Miller (LMV, 9h 00m remaining)" },
-]
-
-export const mockVehicles = [
-  { value: "1", label: "TX-882 (Volvo VNL, Cap 45k lbs)" },
-  { value: "2", label: "TX-901 (Freightliner, Cap 40k lbs)" },
-  { value: "3", label: "TX-945 (Peterbilt, Cap 50k lbs)" },
-]
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
+import { createTrip } from "@/api/trips"
+import { getVehicles } from "@/api/vehicles"
+import { getDrivers } from "@/api/drivers"
+import type { TripCreate, TripStatus } from "@/api/types"
 
 export const cargoTypes = [
   { value: "dry_van", label: "Dry Van (Standard)" },
@@ -28,6 +21,8 @@ export const priorities = [
 
 export function useTripCreate() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
   const [form, setForm] = useState({
     source: "",
     destination: "",
@@ -40,8 +35,26 @@ export function useTripCreate() {
     revenue: "",
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeTab, setActiveTab] = useState<"dispatch" | "draft">("dispatch")
+
+  const { data: vehicles = [] } = useQuery({ queryKey: ["vehicles"], queryFn: () => getVehicles() })
+  const { data: drivers = [] } = useQuery({ queryKey: ["drivers"], queryFn: () => getDrivers() })
+
+  const availableVehicles = vehicles.filter(v => v.status === "Available")
+  const availableDrivers = drivers.filter(d => d.status === "Available")
+
+  const vehicleOptions = availableVehicles.map(v => ({ value: String(v.id), label: `${v.registration_number} (${v.name}, Cap ${v.max_capacity_kg}kg)` }))
+  const driverOptions = availableDrivers.map(d => ({ value: String(d.id), label: `${d.name} (${d.license_category})` }))
+
+  const createMutation = useMutation({
+    mutationFn: (data: TripCreate) => createTrip(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trips"] })
+      toast.success(activeTab === "dispatch" ? "Trip dispatched successfully" : "Draft saved")
+      navigate("/trips")
+    },
+    onError: () => toast.error("Failed to create trip"),
+  })
 
   const updateField = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -65,31 +78,35 @@ export function useTripCreate() {
     e.preventDefault()
     if (!validate()) return
 
-    setIsSubmitting(true)
-    try {
-      await new Promise(resolve => setTimeout(resolve, 700))
-      toast.success(activeTab === "dispatch" ? "Trip dispatched successfully" : "Draft saved")
-      navigate("/trips")
-    } catch {
-      toast.error("Failed to create trip")
-    } finally {
-      setIsSubmitting(false)
+    const payload: TripCreate = {
+      source: form.source,
+      destination: form.destination,
+      vehicle_id: Number(form.vehicle_id),
+      driver_id: Number(form.driver_id),
+      cargo_weight_kg: Number(form.cargo_weight_kg),
+      planned_distance_km: Number(form.planned_distance_km) || 0,
+      revenue: Number(form.revenue) || 0,
+      status: (activeTab === "dispatch" ? "Dispatched" : "Draft") as TripStatus,
     }
+
+    createMutation.mutate(payload)
   }
 
-  const selectedVehicle = mockVehicles.find(v => v.value === form.vehicle_id)
-  const selectedDriver = mockDrivers.find(d => d.value === form.driver_id)
+  const selectedVehicle = vehicleOptions.find(v => v.value === form.vehicle_id)
+  const selectedDriver = driverOptions.find(d => d.value === form.driver_id)
 
   return {
     form,
     errors,
-    isSubmitting,
+    isSubmitting: createMutation.isPending,
     activeTab,
     setActiveTab,
     updateField,
     handleSubmit,
     selectedVehicle,
     selectedDriver,
+    vehicleOptions,
+    driverOptions,
     navigate,
   }
 }

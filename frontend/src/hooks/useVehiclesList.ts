@@ -1,24 +1,9 @@
 import { useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { getVehicles } from "@/api/vehicles"
+import type { VehicleResponse } from "@/api/types"
 
-export interface Vehicle {
-  id: number
-  registration_number: string
-  name: string
-  type: string
-  max_capacity_kg: number
-  odometer_km: number
-  acquisition_cost: number
-  region: string
-  status: string
-}
-
-export const mockVehicles: Vehicle[] = [
-  { id: 1, registration_number: "VAN-05", name: "Ford Transit", type: "Van", max_capacity_kg: 1200, odometer_km: 45200, acquisition_cost: 850000, region: "North", status: "Available" },
-  { id: 2, registration_number: "TRUCK-11", name: "Volvo FH", type: "Truck", max_capacity_kg: 18000, odometer_km: 128500, acquisition_cost: 4500000, region: "East", status: "In Maintenance" },
-  { id: 3, registration_number: "MINI-03", name: "Tata Ace", type: "Mini Truck", max_capacity_kg: 700, odometer_km: 32100, acquisition_cost: 420000, region: "South", status: "Available" },
-  { id: 4, registration_number: "BUS-019", name: "Ashok Leyland", type: "Bus", max_capacity_kg: 5000, odometer_km: 98000, acquisition_cost: 2200000, region: "West", status: "On Trip" },
-  { id: 5, registration_number: "VAN-08", name: "Maruti Eeco", type: "Van", max_capacity_kg: 800, odometer_km: 28000, acquisition_cost: 520000, region: "North", status: "Available" },
-]
+export type Vehicle = VehicleResponse
 
 export function useVehiclesList() {
   const [search, setSearch] = useState("")
@@ -27,8 +12,13 @@ export function useVehiclesList() {
   const [sortKey, setSortKey] = useState<keyof Vehicle | null>(null)
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc")
 
+  const { data: vehicles = [], isLoading } = useQuery({
+    queryKey: ["vehicles"],
+    queryFn: () => getVehicles()
+  })
+
   const filteredVehicles = useMemo(() => {
-    let data = [...mockVehicles]
+    let data = [...vehicles]
 
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -59,7 +49,7 @@ export function useVehiclesList() {
     }
 
     return data
-  }, [search, typeFilter, statusFilter, sortKey, sortDir])
+  }, [vehicles, search, typeFilter, statusFilter, sortKey, sortDir])
 
   const handleSort = (key: keyof Vehicle) => {
     if (sortKey === key) {
@@ -81,5 +71,6 @@ export function useVehiclesList() {
     sortDir,
     filteredVehicles,
     handleSort,
+    isLoading,
   }
 }

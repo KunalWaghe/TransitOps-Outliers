@@ -1,30 +1,46 @@
 import { useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { getTrips } from "@/api/trips"
+import { getVehicles } from "@/api/vehicles"
+import { getDrivers } from "@/api/drivers"
+import type { TripResponse } from "@/api/types"
 
-export interface Trip {
-  id: number
+export interface Trip extends TripResponse {
   trip_id: string
-  source: string
-  destination: string
   vehicle: string
   driver: string
-  cargo_weight_kg: number
-  planned_distance_km: number
-  status: string
 }
-
-export const mockTrips: Trip[] = [
-  { id: 1, trip_id: "TR-8429", source: "Seattle North Terminal", destination: "Portland South Depot", vehicle: "Bus-042", driver: "John Doe", cargo_weight_kg: 32000, planned_distance_km: 280, status: "Dispatched" },
-  { id: 2, trip_id: "TR-8430", source: "Downtown Hub", destination: "Northside Loop", vehicle: "Van-11A", driver: "Alice Smith", cargo_weight_kg: 800, planned_distance_km: 45, status: "Completed" },
-  { id: 3, trip_id: "TR-8431", source: "Airport Terminal", destination: "City Center", vehicle: "Bus-019", driver: "Mike Ross", cargo_weight_kg: 1200, planned_distance_km: 35, status: "Draft" },
-  { id: 4, trip_id: "TR-8425", source: "South Park Depot", destination: "Eastside Warehouse", vehicle: "Van-08B", driver: "Sarah Jones", cargo_weight_kg: 600, planned_distance_km: 20, status: "Cancelled" },
-]
 
 export function useTripsList() {
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
 
+  const { data: rawTrips = [], isLoading: isLoadingTrips } = useQuery({
+    queryKey: ["trips"],
+    queryFn: () => getTrips()
+  })
+
+  const { data: vehicles = [] } = useQuery({
+    queryKey: ["vehicles"],
+    queryFn: () => getVehicles()
+  })
+
+  const { data: drivers = [] } = useQuery({
+    queryKey: ["drivers"],
+    queryFn: () => getDrivers()
+  })
+
+  const trips: Trip[] = useMemo(() => {
+    return rawTrips.map(t => ({
+      ...t,
+      trip_id: `TR-${t.id}`,
+      vehicle: vehicles.find(v => v.id === t.vehicle_id)?.registration_number || `Vehicle ${t.vehicle_id}`,
+      driver: drivers.find(d => d.id === t.driver_id)?.name || `Driver ${t.driver_id}`,
+    }))
+  }, [rawTrips, vehicles, drivers])
+
   const filteredTrips = useMemo(() => {
-    let data = [...mockTrips]
+    let data = [...trips]
 
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -32,7 +48,8 @@ export function useTripsList() {
         t.trip_id.toLowerCase().includes(q) ||
         t.source.toLowerCase().includes(q) ||
         t.destination.toLowerCase().includes(q) ||
-        t.vehicle.toLowerCase().includes(q)
+        t.vehicle.toLowerCase().includes(q) ||
+        t.driver.toLowerCase().includes(q)
       )
     }
 
@@ -41,7 +58,7 @@ export function useTripsList() {
     }
 
     return data
-  }, [search, statusFilter])
+  }, [trips, search, statusFilter])
 
   return {
     search,
@@ -49,5 +66,6 @@ export function useTripsList() {
     statusFilter,
     setStatusFilter,
     filteredTrips,
+    isLoading: isLoadingTrips,
   }
 }

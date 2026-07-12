@@ -1,83 +1,90 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import toast from "react-hot-toast"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { getTrip, dispatchTrip, completeTrip, cancelTrip } from "@/api/trips"
+import { getVehicles } from "@/api/vehicles"
+import { getDrivers } from "@/api/drivers"
+import type { TripResponse, TripComplete } from "@/api/types"
 
-export interface Trip {
-  id: number
+export interface Trip extends TripResponse {
   trip_id: string
-  source: string
-  destination: string
   vehicle: string
   driver: string
-  cargo_weight_kg: number
-  planned_distance_km: number
-  actual_distance_km?: number
-  fuel_consumed_liters?: number
-  revenue?: number
-  status: string
-  created_at: string
-  dispatched_at?: string
-  completed_at?: string
-}
-
-export const mockTrip: Trip = {
-  id: 1,
-  trip_id: "TR-8429",
-  source: "Seattle North Terminal",
-  destination: "Portland South Depot",
-  vehicle: "TX-882 (Volvo VNL)",
-  driver: "Sarah Jenkins",
-  cargo_weight_kg: 32500,
-  planned_distance_km: 450,
-  actual_distance_km: 0,
-  fuel_consumed_liters: 0,
-  revenue: 125000,
-  status: "Draft",
-  created_at: "2026-07-12T09:00:00Z",
 }
 
 export function useTripDetail() {
+  const { id } = useParams()
   const navigate = useNavigate()
-  const [trip, setTrip] = useState<Trip>(mockTrip)
+  const queryClient = useQueryClient()
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+
+  const { data: rawTrip, isLoading: isLoadingTrip } = useQuery({
+    queryKey: ["trips", id],
+    queryFn: () => getTrip(Number(id)),
+    enabled: Boolean(id)
+  })
+
+  const { data: vehicles = [] } = useQuery({ queryKey: ["vehicles"], queryFn: () => getVehicles() })
+  const { data: drivers = [] } = useQuery({ queryKey: ["drivers"], queryFn: () => getDrivers() })
+
+  const trip: Trip | null = rawTrip ? {
+    ...rawTrip,
+    trip_id: `TR-${rawTrip.id}`,
+    vehicle: vehicles.find(v => v.id === rawTrip.vehicle_id)?.registration_number || `Vehicle ${rawTrip.vehicle_id}`,
+    driver: drivers.find(d => d.id === rawTrip.driver_id)?.name || `Driver ${rawTrip.driver_id}`,
+  } : null
+
+  const dispatchMutation = useMutation({
+    mutationFn: () => dispatchTrip(Number(id)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trips", id] })
+      toast.success("Trip dispatched")
+    },
+    onError: () => toast.error("Failed to dispatch trip")
+  })
+
+  const completeMutation = useMutation({
+    mutationFn: (data: TripComplete) => completeTrip(Number(id), data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trips", id] })
+      toast.success("Trip completed")
+    },
+    onError: () => toast.error("Failed to complete trip")
+  })
+
+  const cancelMutation = useMutation({
+    mutationFn: () => cancelTrip(Number(id)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trips", id] })
+      toast.success("Trip cancelled")
+      setShowCancelConfirm(false)
+    },
+    onError: () => toast.error("Failed to cancel trip")
+  })
 
   const handleDispatch = async () => {
-    setIsLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 500))
-    setTrip(prev => ({ ...prev, status: "Dispatched", dispatched_at: new Date().toISOString() }))
-    toast.success("Trip dispatched")
-    setIsLoading(false)
+    dispatchMutation.mutate()
   }
 
   const handleComplete = async () => {
-    setIsLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 500))
-    setTrip(prev => ({
-      ...prev,
-      status: "Completed",
-      completed_at: new Date().toISOString(),
-      actual_distance_km: prev.planned_distance_km,
-      fuel_consumed_liters: 125,
-    }))
-    toast.success("Trip completed")
-    setIsLoading(false)
+    completeMutation.mutate({
+      actual_distance_km: trip?.planned_distance_km || 0,
+      fuel_consumed_liters: 0, // In a full app, this would be collected via a form
+    })
   }
 
   const handleCancel = async () => {
-    setIsLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 500))
-    setTrip(prev => ({ ...prev, status: "Cancelled" }))
-    toast.success("Trip cancelled")
-    setShowCancelConfirm(false)
-    setIsLoading(false)
+    cancelMutation.mutate()
   }
+
+  const isMutating = dispatchMutation.isPending || completeMutation.isPending || cancelMutation.isPending
 
   return {
     trip,
     showCancelConfirm,
     setShowCancelConfirm,
-    isLoading,
+    isLoading: isLoadingTrip || isMutating,
     handleDispatch,
     handleComplete,
     handleCancel,
