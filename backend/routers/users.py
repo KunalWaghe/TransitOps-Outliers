@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from database import get_db
-from dependencies import get_current_user
+from dependencies import get_db, get_current_user
 from models.user import User, Role
 from schemas.auth import UserProfile, UserUpdate, UserCreate
 from email_validator import validate_email, EmailNotValidError
