@@ -14,9 +14,18 @@ interface DataTableProps<T> {
   keyExtractor: (row: T) => string | number
   emptyMessage?: string
   className?: string
+  isLoading?: boolean
 }
 
-export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = "No records found", className }: DataTableProps<T>) {
+export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = "No records found", className, isLoading }: DataTableProps<T>) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-[var(--space-xl)] text-[var(--brand-ink-muted)]">
+        <p style={{ fontSize: "var(--text-body-sm)" }}>Loading...</p>
+      </div>
+    )
+  }
+
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center py-[var(--space-xl)] text-[var(--brand-ink-muted)]">

@@ -8,8 +8,6 @@ import { Select } from "@/components/shared/Select"
 import { cn } from "@/lib/utils"
 import {
   useTripCreate,
-  mockDrivers,
-  mockVehicles,
   cargoTypes,
   priorities,
 } from "@/hooks/useTripCreate"
@@ -24,8 +22,10 @@ export function TripCreatePage() {
     setActiveTab,
     updateField,
     handleSubmit,
-    selectedVehicle,
     selectedDriver,
+    selectedVehicle,
+    vehicleOptions,
+    driverOptions,
   } = useTripCreate()
 
   return (
@@ -74,14 +74,14 @@ export function TripCreatePage() {
                 label="Driver Selection"
                 value={form.driver_id}
                 onChange={e => updateField("driver_id", e.target.value)}
-                options={[{ value: "", label: "Select driver" }, ...mockDrivers]}
+                options={[{ value: "", label: "Select driver" }, ...driverOptions]}
                 error={errors.driver_id}
               />
               <Select
                 label="Vehicle Selection"
                 value={form.vehicle_id}
                 onChange={e => updateField("vehicle_id", e.target.value)}
-                options={[{ value: "", label: "Select vehicle" }, ...mockVehicles]}
+                options={[{ value: "", label: "Select vehicle" }, ...vehicleOptions]}
                 error={errors.vehicle_id}
               />
             </div>
