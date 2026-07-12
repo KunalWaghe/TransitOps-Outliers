@@ -9,7 +9,10 @@ class MaintenanceType(str, enum.Enum):
     TIRE = "Tire Replacement"
     ENGINE = "Engine Repair"
     BRAKE = "Brake Service"
-    INSPECTION = "General Inspection"
+    GENERAL_INSPECTION = "General Inspection"
+    REPAIR = "Repair"
+    ROUTINE = "Routine"
+    INSPECTION = "Inspection"
 
 class MaintenanceStatus(str, enum.Enum):
     ACTIVE = "Active"
