@@ -50,7 +50,7 @@
 | S1-10 | Implement RBAC dependency and role guards | M3 | done | 4 roles: fleet_manager, dispatcher, safety_officer, financial_analyst |
 | S1-11 | Create seed script for roles and demo users | M3 | done | `seed.py` |
 | S1-12 | Implement Vehicle router + service: CRUD, search, filter, unique reg validation | M2 | done | `routers/vehicles.py`, `services/vehicle_service.py` |
-| S1-13 | Implement Driver router + service: CRUD, search, filter, unique license validation | M2 | not_started | `routers/drivers.py`, `services/driver_service.py` |
+| S1-13 | Implement Driver router + service: CRUD, search, filter, unique license validation | M2 | done | `routers/drivers.py`, `services/driver_service.py` |
 | S1-14 | **CP1 — Hour 2**: Merge auth + login + DB schema to `main` | ALL | not_started | Login page functional, schema live |
 | S1-15 | Wire frontend Vehicle/Driver pages to real APIs | M1 | not_started | Replace mock data with API calls |
 | S1-16 | Verify responsive layout on mobile (375px) | M1 | not_started | Use dev tools |
@@ -68,12 +68,12 @@
 | S2-5 | Implement Maintenance create form | M1 | not_started | Select vehicle, type, cost, notes |
 | S2-6 | Implement Fuel log list + create form | M1 | not_started | Vehicle, liters, cost, odometer, date |
 | S2-7 | Implement Expense list + create form | M1 | not_started | Category, amount, date, description |
-| S2-8 | Implement Trip router + service with all business rules (BR2-BR8) | M2 | not_started | Create, dispatch, complete, cancel with transactions |
-| S2-9 | Implement Maintenance router + service with BR9-BR10 | M2 | not_started | Auto-set vehicle to `In Shop` / `Available` |
+| S2-8 | Implement Trip router + service with all business rules (BR2-BR8) | M2 | done | Create, dispatch, complete, cancel with transactions |
+| S2-9 | Implement Maintenance router + service with BR9-BR10 | M2 | done | Auto-set vehicle to `In Shop` / `Available` |
 | S2-10 | Implement Fuel log router + service | M3 | done | CRUD for fuel entries |
 | S2-11 | Implement Expense router + service | M3 | done | Record tolls, maintenance costs, fines |
 | S2-12 | Expand seed script | M3 | done | Add dummy vehicles, trips, drivers, fuel logs, expenses, maintenance |
-| S2-13 | Add `revenue` field to Trip model and schemas | M2 | not_started | Optional decimal for ROI calc |
+| S2-13 | Add `revenue` field to Trip model and schemas | M2 | done | Optional decimal for ROI calc |
 | S2-14 | **CP2 — Hour 4**: Merge trips + maintenance + fuel/expenses to `main` | ALL | not_started | Trip E2E flow working |
 | S2-15 | Wire all CRUD pages to real APIs | M1 | not_started | Replace any remaining mock data |
 | S2-16 | Test edge cases: duplicate reg, on-trip delete, cargo capacity, empty dropdowns | M2 | not_started | Verify backend returns correct errors |
