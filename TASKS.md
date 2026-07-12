@@ -50,7 +50,7 @@
 | S1-12 | Implement Vehicle router + service: CRUD, search, filter, unique reg validation | M2 | done | `routers/vehicles.py`, `services/vehicle_service.py` |
 | S1-13 | Implement Driver router + service: CRUD, search, filter, unique license validation | M2 | done | `routers/drivers.py`, `services/driver_service.py` |
 | S1-14 | **CP1 — Hour 2**: Merge auth + login + DB schema to `main` | ALL | not_started | Login page functional, schema live |
-| S1-15 | Wire frontend Vehicle/Driver pages to real APIs | M1 | not_started | Replace mock data with API calls |
+| S1-15 | Wire frontend Vehicle/Driver pages to real APIs | M1 | in_progress | `useVehiclesList` hook extracted; M2 vehicle/driver APIs ready; swap mock → `apiClient` calls |
 | S1-16 | Verify responsive layout on mobile (375px) | M1 | not_started | Use dev tools |
 
 ---
