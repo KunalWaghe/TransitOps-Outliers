@@ -88,7 +88,7 @@
 | S3-4 | Implement Dashboard KPI endpoint `GET /api/dashboard/kpis` | M3 | done | Filter by type/status/region |
 | S3-5 | Implement Dashboard chart endpoint `GET /api/dashboard/charts` | M3 | done | Returns utilization, cost trends |
 | S3-6 | Implement CSV export endpoint `GET /api/reports/export/csv` | M2 | done | Financial analyst role only |
-| S3-7 | Build Reports page with charts and export button | M1 | in_progress | Export wired to CSV/PDF endpoints (uncommitted); chart data still static |
+| S3-7 | Build Reports page with charts and export button | M1 | done | CSV/PDF export wired with role check; chart data still static |
 | S3-8 | **CP3 — Hour 6**: Merge all P0 features to `main` | ALL | not_started | Dashboard with real data |
 | S3-9 | (P1) Implement PDF export endpoint `GET /api/reports/export/pdf` | M2 | done | Use `reportlab` |
 | S3-10 | (P1) Add dark mode toggle + ThemeContext | M1 | done | Toggle in SidebarFooter; ThemeContext already exists; layout verified |

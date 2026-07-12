@@ -38,11 +38,4 @@ export const NAV_GROUPS: NavGroup[] = [
       { id: "settings",     label: "Settings",    icon: "Settings",        to: "/settings" },
     ],
   },
-  {
-    id: "dev",
-    label: "Development",
-    items: [
-      { id: "designsystem", label: "Design System", icon: "Palette", to: "/designsystem" },
-    ],
-  },
 ]
