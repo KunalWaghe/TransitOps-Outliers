@@ -31,4 +31,11 @@ export const NAV_GROUPS: NavGroup[] = [
       { id: "reports",     label: "Reports",     icon: "BarChart2",       to: "/reports" },
     ],
   },
+  {
+    id: "dev",
+    label: "Development",
+    items: [
+      { id: "designsystem", label: "Design System", icon: "Palette", to: "/designsystem" },
+    ],
+  },
 ]
