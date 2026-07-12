@@ -90,7 +90,7 @@
 | S3-6 | Implement CSV export endpoint `GET /api/reports/export/csv` | M2 | done | Financial analyst role only |
 | S3-7 | Build Reports page with charts and export button | M1 | done | `/reports`; KPI cards; monthly revenue chart; top costliest vehicles; export button |
 | S3-8 | **CP3 — Hour 6**: Merge all P0 features to `main` | ALL | not_started | Dashboard with real data |
-| S3-9 | (P1) Implement PDF export endpoint `GET /api/reports/export/pdf` | M2 | not_started | Use `reportlab` |
+| S3-9 | (P1) Implement PDF export endpoint `GET /api/reports/export/pdf` | M2 | done | Use `reportlab` |
 | S3-10 | (P1) Add dark mode toggle + ThemeContext | M1 | done | Toggle in SidebarFooter; ThemeContext already exists; layout verified |
 | S3-11 | (P1) Implement email reminder endpoint for expiring licenses | M3 | not_started | No SMTP; identify 30-day expirations and show in UI |
 | S3-12 | (P1) Build UI alert for expiring license reminders | M1 | not_started | |
