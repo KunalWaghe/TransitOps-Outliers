@@ -22,5 +22,11 @@ class User(Base):
     name = Column(String, nullable=False)
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Security Fields for Sprint 4
+    failed_login_attempts = Column(Integer, default=0)
+    locked_until = Column(DateTime, nullable=True)
+    reset_password_token = Column(String, nullable=True, index=True)
+    reset_password_expires = Column(DateTime, nullable=True)
 
     role = relationship("Role", back_populates="users")
