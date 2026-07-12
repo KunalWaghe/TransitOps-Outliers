@@ -39,10 +39,10 @@
 | S1-1 | Build Login page with form validation and error handling | M1 | done | Form, role tabs, validation, toast, redirects to `/` on success |
 | S1-2 | Set up AuthContext for login/logout and JWT storage | M1 | done | AuthProvider + useAuth hook; token in localStorage; role stored |
 | S1-3 | Create Axios client with JWT interceptor | M1 | done | Bearer token injected; 401 redirects to `/login` |
-| S1-4 | Build Vehicle list page with search, filter by status/type, sort | M1 | done | Mock data; search, type/status filters, sort |
-| S1-5 | Build Vehicle create/edit form with validation | M1 | done | `/vehicles/new` and `/vehicles/:id/edit`; validation; inline error slot |
-| S1-6 | Build Driver list page with search, filter by status, sort | M1 | done | Mock data; expired/expiring license warnings |
-| S1-7 | Build Driver create/edit form with validation | M1 | done | `/drivers/new` and `/drivers/:id/edit`; date picker; validation |
+| S1-4 | Build Vehicle list page with search, filter by status/type, sort | M1 | done | React Query + `getVehicles()`; search, type/status filters, sort |
+| S1-5 | Build Vehicle create/edit form with validation | M1 | done | `/vehicles/new` and `/vehicles/:id/edit`; API mutations; validation |
+| S1-6 | Build Driver list page with search, filter by status, sort | M1 | done | React Query + `getDrivers()`; expired/expiring license warnings |
+| S1-7 | Build Driver create/edit form with validation | M1 | done | `/drivers/new` and `/drivers/:id/edit`; API mutations; date picker |
 | S1-8 | Build reusable `DataTable`, `StatusBadge`, `LoadingSpinner`, `EmptyState` components | M1 | done | Plus PageHeader, Card, Input, Select, Button |
 | S1-9 | Implement Auth router: `POST /api/auth/login`, `GET /api/auth/me` | M3 | done | JWT via `python-jose` + `passlib` |
 | S1-10 | Implement RBAC dependency and role guards | M3 | done | 4 roles: fleet_manager, dispatcher, safety_officer, financial_analyst |
@@ -50,7 +50,7 @@
 | S1-12 | Implement Vehicle router + service: CRUD, search, filter, unique reg validation | M2 | done | `routers/vehicles.py`, `services/vehicle_service.py` |
 | S1-13 | Implement Driver router + service: CRUD, search, filter, unique license validation | M2 | done | `routers/drivers.py`, `services/driver_service.py` |
 | S1-14 | **CP1 — Hour 2**: Merge auth + login + DB schema to `main` | ALL | not_started | Login page functional, schema live |
-| S1-15 | Wire frontend Vehicle/Driver pages to real APIs | M1 | in_progress | `useVehiclesList` hook extracted; M2 vehicle/driver APIs ready; swap mock → `apiClient` calls |
+| S1-15 | Wire frontend Vehicle/Driver pages to real APIs | M1 | done | React Query hooks + `api/vehicles.ts` & `api/drivers.ts`; CRUD mutations wired |
 | S1-16 | Verify responsive layout on mobile (375px) | M1 | not_started | Use dev tools |
 
 ---
@@ -73,7 +73,7 @@
 | S2-12 | Expand seed script with vehicles, drivers, trips, fuel, expenses, maintenance | M3 | done | Realistic demo data |
 | S2-13 | Add `revenue` field to Trip model and schemas | M2 | not_started | Optional decimal for ROI calc |
 | S2-14 | **CP2 — Hour 4**: Merge trips + maintenance + fuel/expenses to `main` | ALL | not_started | Trip E2E flow working |
-| S2-15 | Wire all CRUD pages to real APIs | M1 | not_started | Replace any remaining mock data |
+| S2-15 | Wire all CRUD pages to real APIs | M1 | done | Trips, maintenance, fuel, expenses, dashboard KPIs wired via React Query; reports charts/export still static |
 | S2-16 | Test edge cases: duplicate reg, on-trip delete, cargo capacity, empty dropdowns | M2 | done | Verify backend returns correct errors |
 
 ---
