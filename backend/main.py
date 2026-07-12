@@ -22,9 +22,13 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
+app.include_router(vehicles.router)
+app.include_router(drivers.router)
 app.include_router(fuel_logs.router)
 app.include_router(expenses.router)
 app.include_router(dashboard.router)
+app.include_router(trips.router)
+app.include_router(maintenance.router)
 
 @app.get("/")
 def read_root():
