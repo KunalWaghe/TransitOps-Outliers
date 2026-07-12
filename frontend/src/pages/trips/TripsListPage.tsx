@@ -30,6 +30,7 @@ export function TripsListPage() {
     {
       key: "trip_id",
       header: "Trip ID",
+      sortValue: t => t.id,
       render: t => <Link to={`/trips/${t.id}`} className="font-mono text-[var(--brand-primary)] hover:underline">{t.trip_id}</Link>,
     },
     { key: "vehicle", header: "Vehicle", render: t => <span className="font-medium">{t.vehicle}</span> },
@@ -37,6 +38,7 @@ export function TripsListPage() {
     {
       key: "route",
       header: "Route",
+      sortValue: t => `${t.source} ${t.destination}`,
       render: t => (
         <span className="text-[var(--brand-ink-muted)]">
           {t.source} <span className="mx-1">→</span> {t.destination}
@@ -47,6 +49,7 @@ export function TripsListPage() {
       key: "cargo_weight_kg",
       header: "Cargo",
       align: "right",
+      sortValue: t => t.cargo_weight_kg,
       render: t => <span>{t.cargo_weight_kg.toLocaleString("en-IN")} kg</span>,
     },
     {
@@ -96,7 +99,12 @@ export function TripsListPage() {
         </div>
 
         {filteredTrips.length > 0 ? (
-          <DataTable columns={columns} data={filteredTrips} keyExtractor={t => t.id} />
+          <DataTable
+            columns={columns}
+            data={filteredTrips}
+            keyExtractor={t => t.id}
+            defaultSort={{ key: "trip_id", direction: "desc" }}
+          />
         ) : (
           <EmptyState title="No trips found" message="Try adjusting your search or filters." />
         )}

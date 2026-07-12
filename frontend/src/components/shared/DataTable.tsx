@@ -1,13 +1,22 @@
-import { useState, useEffect } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+
+export type SortDirection = "asc" | "desc"
 
 export interface Column<T> {
   key: string
   header: string
   width?: string
   align?: "left" | "right" | "center"
+  sortable?: boolean
+  sortValue?: (row: T) => string | number | null | undefined
   render: (row: T) => React.ReactNode
+}
+
+export interface DefaultSort {
+  key: string
+  direction: SortDirection
 }
 
 interface DataTableProps<T> {
@@ -19,6 +28,44 @@ interface DataTableProps<T> {
   isLoading?: boolean
   pageSize?: number
   pagination?: boolean
+  defaultSort?: DefaultSort
+}
+
+function isColumnSortable<T>(col: Column<T>): boolean {
+  if (col.sortable === false) return false
+  if (col.key === "actions") return false
+  if (!col.header.trim()) return false
+  return true
+}
+
+function getSortValue<T>(row: T, col: Column<T>): string | number | null | undefined {
+  if (col.sortValue) return col.sortValue(row)
+  const value = (row as Record<string, unknown>)[col.key]
+  if (typeof value === "string" || typeof value === "number") return value
+  return null
+}
+
+function compareValues(a: string | number | null | undefined, b: string | number | null | undefined): number {
+  if (a == null && b == null) return 0
+  if (a == null) return 1
+  if (b == null) return -1
+
+  if (typeof a === "number" && typeof b === "number") {
+    return a - b
+  }
+
+  const aStr = String(a)
+  const bStr = String(b)
+  const aDate = Date.parse(aStr)
+  const bDate = Date.parse(bStr)
+  const aLooksLikeDate = !Number.isNaN(aDate) && /^\d{4}-\d{2}-\d{2}/.test(aStr)
+  const bLooksLikeDate = !Number.isNaN(bDate) && /^\d{4}-\d{2}-\d{2}/.test(bStr)
+
+  if (aLooksLikeDate && bLooksLikeDate) {
+    return aDate - bDate
+  }
+
+  return aStr.localeCompare(bStr, undefined, { numeric: true, sensitivity: "base" })
 }
 
 export function DataTable<T>({
@@ -29,14 +76,42 @@ export function DataTable<T>({
   className,
   isLoading,
   pageSize = 10,
-  pagination = true
+  pagination = true,
+  defaultSort,
 }: DataTableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1)
+  const [sortKey, setSortKey] = useState<string | null>(defaultSort?.key ?? null)
+  const [sortDirection, setSortDirection] = useState<SortDirection>(defaultSort?.direction ?? "asc")
 
   const dataKeysString = data.map(keyExtractor).join(",")
   useEffect(() => {
     setCurrentPage(1)
-  }, [dataKeysString])
+  }, [dataKeysString, sortKey, sortDirection])
+
+  const sortedData = useMemo(() => {
+    if (!sortKey) return data
+
+    const column = columns.find(col => col.key === sortKey)
+    if (!column || !isColumnSortable(column)) return data
+
+    return [...data].sort((a, b) => {
+      const comparison = compareValues(getSortValue(a, column), getSortValue(b, column))
+      return sortDirection === "asc" ? comparison : -comparison
+    })
+  }, [columns, data, sortDirection, sortKey])
+
+  const handleSort = (key: string) => {
+    const column = columns.find(col => col.key === key)
+    if (!column || !isColumnSortable(column)) return
+
+    if (sortKey === key) {
+      setSortDirection(prev => (prev === "asc" ? "desc" : "asc"))
+      return
+    }
+
+    setSortKey(key)
+    setSortDirection("asc")
+  }
 
   if (isLoading) {
     return (
@@ -54,10 +129,10 @@ export function DataTable<T>({
     )
   }
 
-  const totalPages = Math.ceil(data.length / pageSize)
+  const totalPages = Math.ceil(sortedData.length / pageSize)
   const activePage = Math.min(currentPage, totalPages) || 1
   const startIndex = (activePage - 1) * pageSize
-  const paginatedData = pagination ? data.slice(startIndex, startIndex + pageSize) : data
+  const paginatedData = pagination ? sortedData.slice(startIndex, startIndex + pageSize) : sortedData
 
   function getPageNumbers(current: number, total: number): (number | string)[] {
     const pages: (number | string)[] = []
@@ -97,19 +172,59 @@ export function DataTable<T>({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-[var(--border)] bg-[var(--muted)]">
-              {columns.map(col => (
-                <th
-                  key={col.key}
-                  className={cn(
-                    "py-3 px-[var(--space-md)] font-semibold uppercase tracking-wider text-[var(--brand-ink-muted)] whitespace-nowrap",
-                    col.align === "right" && "text-right",
-                    col.align === "center" && "text-center"
-                  )}
-                  style={{ fontSize: "var(--text-eyebrow)", lineHeight: "var(--leading-eyebrow)" }}
-                >
-                  {col.header}
-                </th>
-              ))}
+              {columns.map(col => {
+                const sortable = isColumnSortable(col)
+                const isActive = sortKey === col.key
+
+                return (
+                  <th
+                    key={col.key}
+                    className={cn(
+                      "py-3 px-[var(--space-md)] font-semibold uppercase tracking-wider text-[var(--brand-ink-muted)] whitespace-nowrap",
+                      col.align === "right" && "text-right",
+                      col.align === "center" && "text-center"
+                    )}
+                    style={{ fontSize: "var(--text-eyebrow)", lineHeight: "var(--leading-eyebrow)" }}
+                    aria-sort={
+                      sortable
+                        ? isActive
+                          ? sortDirection === "asc"
+                            ? "ascending"
+                            : "descending"
+                          : "none"
+                        : undefined
+                    }
+                  >
+                    {sortable ? (
+                      <button
+                        type="button"
+                        onClick={() => handleSort(col.key)}
+                        className={cn(
+                          "inline-flex items-center gap-1.5 transition-colors",
+                          col.align === "right" && "ml-auto",
+                          col.align === "center" && "mx-auto",
+                          isActive
+                            ? "text-[var(--brand-ink)]"
+                            : "hover:text-[var(--brand-ink)]"
+                        )}
+                      >
+                        <span>{col.header}</span>
+                        {isActive ? (
+                          sortDirection === "asc" ? (
+                            <ArrowUp size={14} aria-hidden="true" />
+                          ) : (
+                            <ArrowDown size={14} aria-hidden="true" />
+                          )
+                        ) : (
+                          <ArrowUpDown size={14} className="opacity-50" aria-hidden="true" />
+                        )}
+                      </button>
+                    ) : (
+                      col.header
+                    )}
+                  </th>
+                )
+              })}
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border)]">
@@ -142,9 +257,9 @@ export function DataTable<T>({
           <div className="text-[var(--brand-ink-muted)]" style={{ fontSize: "var(--text-caption)" }}>
             Showing <span className="font-semibold text-[var(--brand-ink)]">{startIndex + 1}</span> to{" "}
             <span className="font-semibold text-[var(--brand-ink)]">
-              {Math.min(startIndex + pageSize, data.length)}
+              {Math.min(startIndex + pageSize, sortedData.length)}
             </span>{" "}
-            of <span className="font-semibold text-[var(--brand-ink)]">{data.length}</span> entries
+            of <span className="font-semibold text-[var(--brand-ink)]">{sortedData.length}</span> entries
           </div>
 
           <div className="flex items-center gap-1.5">

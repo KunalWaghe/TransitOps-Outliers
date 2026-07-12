@@ -133,3 +133,38 @@ export interface HTTPValidationError {
     type: string
   }>
 }
+
+export interface UserResponse {
+  id: number
+  email: string
+  name: string
+  role: string
+}
+
+export interface UserCreate {
+  name: string
+  email: string
+  password?: string
+  role: string
+}
+
+export interface UserUpdate {
+  name?: string | null
+  email?: string | null
+  role?: string | null
+}
+
+export interface AppSettingResponse {
+  id: number
+  depot_name: string | null
+  currency: string | null
+  distance_unit: string | null
+  updated_at: string
+}
+
+export interface AppSettingUpdate {
+  depot_name?: string | null
+  currency?: string | null
+  distance_unit?: string | null
+}
+
