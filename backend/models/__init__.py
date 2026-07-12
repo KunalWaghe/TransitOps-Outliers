@@ -1,10 +1,25 @@
 from database import Base
 from .user import User, Role
-from .vehicle import Vehicle
 # Future models will be imported here
+from .base import Base
+from .user import Role, User
+from .vehicle import Vehicle
 from .driver import Driver
 from .trip import Trip
-from .expense import Expense
-from .fuel_log import FuelLog
 from .maintenance import MaintenanceLog
+from .fuel_log import FuelLog
+from .expense import Expense
 from .vehicle_document import VehicleDocument
+
+__all__ = [
+    "Base",
+    "Role",
+    "User",
+    "Vehicle",
+    "Driver",
+    "Trip",
+    "MaintenanceLog",
+    "FuelLog",
+    "Expense",
+    "VehicleDocument"
+]

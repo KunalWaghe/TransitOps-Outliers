@@ -1,8 +1,17 @@
+import asyncio
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, vehicles, drivers, fuel_logs, expenses, dashboard, trips, maintenance
+from routers import auth, fuel_logs, expenses, dashboard
+from services.scheduler import check_expiring_licenses
 
-app = FastAPI(title="TransitOps API")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    task = asyncio.create_task(check_expiring_licenses())
+    yield
+    task.cancel()
+
+app = FastAPI(title="TransitOps API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
