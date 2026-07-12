@@ -1,5 +1,10 @@
 export function formatDate(value: string | Date): string {
-  const date = typeof value === "string" ? new Date(value) : value
+  const date =
+    typeof value === "string"
+      ? value.length === 10
+        ? new Date(`${value}T00:00:00`)
+        : new Date(value)
+      : value
   return date.toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "short",
